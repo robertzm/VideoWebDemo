@@ -132,5 +132,5 @@ dmypy.json
 .idea/
 
 # movie and subtitle
-static/movie/
-static/subtitle/
+app/static/movie/
+app/static/subtitle/
