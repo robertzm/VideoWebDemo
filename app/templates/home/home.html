@@ -2,7 +2,10 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scal=1.0">
+    <meta http-equiv="X-UA-Compatible" content="id=edge">
     <title>MyMovieDevoWeb</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}" type="text/css">
 </head>
 <body>
 <nav>
@@ -14,8 +17,7 @@
     {% block content %}
     {% endblock %}
 </div>
-
-
+<script src="{{ url_for('static', filename='index.js') }}"></script>
 
 <footer>
     <div class="container">
