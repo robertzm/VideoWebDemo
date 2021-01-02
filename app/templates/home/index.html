@@ -8,10 +8,12 @@
             <use href="#pause"></use>
         </svg>
     </div>
+    <div class="movie-title">
+        <h1>
+            {{file}}
+        </h1>
+    </div>
 
-    <h1>
-        {{file}}
-    </h1>
     <video controls class="video" id="video" preload="metadata">
         <source src="{{ url_for('static', filename= file) }}" type="video/webm"/>
         <!-- track src="{{ url_for('static', filename='subtitle/tenet.vtt') }}" label="English" kind="captions" scrlang="en-CN" default / -->

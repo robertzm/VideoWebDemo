@@ -1,7 +1,9 @@
 /* ==========================================================================
    #Custom HTML5 Video Player
    ========================================================================== */
-
+h1 {
+  color:#FFF;
+}
 :root {
   --youtube-red: #FE0900;
 }
@@ -27,6 +29,7 @@ body {
   height: 100%;
   justify-content: center;
   align-items: center;
+  background-color: #000;
 }
 
 .video-container {
@@ -303,7 +306,7 @@ svg {
 .movie-list-container {
     display: inline-block;
     clear: left;
-    background: white;
+    background: #000;
     width: 100%;
     margin: 80px auto 0;
     box-shadow: 0 0 5px rgba(65,67,144,0.15);
@@ -329,7 +332,11 @@ li {
     text-overflow: ellipsis;
     width: 100%;
     overflow: hidden;
-    color: #475268;
+    color: #FFF;
+}
+
+a {
+    color: #FFF;
 }
 
 .field-name {
@@ -351,4 +358,5 @@ li {
   background-color: #efefef;
   text-align: center;
 }
+
 
