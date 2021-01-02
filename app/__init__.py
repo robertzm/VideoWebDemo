@@ -11,6 +11,7 @@ def create_app():
     app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@127.0.0.1:8889/videoDevo"
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
+    app.config['SECRET_KEY'] = 'DontTellAnyone'
 
     db.init_app(app)
 
