@@ -23,7 +23,7 @@ def index(short):
 
 @app.route("/", methods=["GET"])
 @deprecation.deprecated(deprecated_in="1.x", removed_in="2.0",
-                        current_version=__version__,
+                        current_version="1.0",
                         details="Use 'RegisterMovie()' instead.")
 def addMovie():
     nameEN = request.args.get("nameEN")
