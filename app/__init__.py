@@ -1,12 +1,22 @@
-#coding:utf8
-
+"""Initialize Flask app."""
 from flask import Flask
+from flask_sqlalchemy import SQLAlchemy
+from ddtrace import patch_all
 
-app = Flask(__name__)
-app.debug = True
+db = SQLAlchemy()
+patch_all()
 
-from app.home import home as home_blueprint
-from app.admin import admin as admin_blueprint
+def create_app():
+    """Construct the core application."""
+    app = Flask(__name__)
+    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@127.0.0.1:8889/videoDevo"
+    app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
 
-app.register_blueprint(home_blueprint)
-app.register_blueprint(admin_blueprint, url_prefix="/admin")
+    db.init_app(app)
+
+    with app.app_context():
+        from . import routes  # Import routes
+
+        db.create_all()  # Create database tables for our data models
+
+        return app

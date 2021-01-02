@@ -9,8 +9,11 @@
         </svg>
     </div>
 
+    <h1>
+        {{file}}
+    </h1>
     <video controls class="video" id="video" preload="metadata">
-        <source src="{{ url_for('static', filename='movie/tenet.mp4') }}" type="video/webm"/>
+        <source src="{{ url_for('static', filename= file) }}" type="video/webm"/>
         <!-- track src="{{ url_for('static', filename='subtitle/tenet.vtt') }}" label="English" kind="captions" scrlang="en-CN" default / -->
     </video>
 
@@ -118,4 +121,31 @@
     </defs>
 </svg>
 
+<div class="movie-list-container linebreak">
+    <h1>All movies</h1>
+    {% for movie in allMovies %}
+    <ul id="movie.short">
+        <li>
+            <span class="field-name">ID:</span>
+            <span class="field-value">{{ movie.id }}</span>
+        </li>
+        <li>
+            <span class="field-name">Film Name(EN):</span>
+            <span class="field-value">{{ movie.nameEN }}</span>
+        </li>
+        <li>
+            <span class="field-name">Film Name(CN):</span>
+            <span class="field-value">{{ movie.nameCN }}</span>
+        </li>
+        <li>
+            <span class="field-name">Year:</span>
+            <span class="field-value">Unknown</span>
+        </li>
+        <li>
+            <span class="field-name">File Name:</span>
+            <span class="field-value"><a href={{ movie.short }}>{{ movie.fileName }}</a></span>
+        </li>
+    </ul>
+    {% endfor %}
+</div>
 {% endblock %}
