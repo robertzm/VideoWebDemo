@@ -1,13 +1,10 @@
 #coding:utf8
 from werkzeug.utils import secure_filename
 
-from app.home import home
-from datetime import datetime as dt
-
 from flask import current_app as app
-from flask import make_response, redirect, render_template, request, url_for
+from flask import make_response, render_template, request
 from flask_wtf import Form
-from wtforms import StringField, PasswordField, SubmitField, FileField
+from wtforms import StringField, SubmitField, FileField
 from wtforms.validators import InputRequired
 
 from .models import Movie, db
@@ -45,7 +42,7 @@ def addMovie():
         db.session.commit()
         return render_template("home/index.html", file=newMovie.path + '/' + newMovie.fileName, allMovies=Movie.query.all())
 
-class LoginForm(Form):
+class RegisterForm(Form):
   nameEN = StringField('name-en', validators=[InputRequired()])
   nameCN = StringField('name-cn')
   path = StringField('path')
@@ -55,7 +52,7 @@ class LoginForm(Form):
 
 @app.route("/register", methods=['GET', 'POST'])
 def registerMovie():
-    form = LoginForm()
+    form = RegisterForm()
     if form.validate_on_submit():
         # TODO: add more validation and default values
         fn = secure_filename(form.file.data)
