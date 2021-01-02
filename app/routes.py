@@ -6,19 +6,25 @@ from flask import make_response, render_template, request
 from flask_wtf import Form
 from wtforms import StringField, SubmitField, FileField
 from wtforms.validators import InputRequired
+import deprecation
 
 from .models import Movie, db
 
-@app.route("/<short>", methods=["GET"])
+@app.route("/movie/<short>", methods=["GET"])
 def index(short):
     print("I'm here for " + short)
     existing = Movie.query.filter(Movie.short == short).first()
 
     if existing:
         print("yes")
-        return render_template("home/index.html", file=existing.path + '/' + existing.fileName, allMovies=Movie.query.all())
+        return render_template("home/index.html", file=existing.filePath(), allMovies=Movie.query.all())
+    else:
+        make_response("There's no movie for '{}' existing. ".format(short))
 
 @app.route("/", methods=["GET"])
+@deprecation.deprecated(deprecated_in="1.x", removed_in="2.0",
+                        current_version=__version__,
+                        details="Use 'RegisterMovie()' instead.")
 def addMovie():
     nameEN = request.args.get("nameEN")
     nameCN = request.args.get("nameCN")
@@ -40,7 +46,7 @@ def addMovie():
         )
         db.session.add(newMovie)
         db.session.commit()
-        return render_template("home/index.html", file=newMovie.path + '/' + newMovie.fileName, allMovies=Movie.query.all())
+        return render_template("home/index.html", file=newMovie.filePath(), allMovies=Movie.query.all())
 
 class RegisterForm(Form):
   nameEN = StringField('name-en', validators=[InputRequired()])
@@ -65,5 +71,5 @@ def registerMovie():
         )
         db.session.add(newMovie)
         db.session.commit()
-        return render_template("home/index.html", file=newMovie.path + '/' + newMovie.fileName, allMovies=Movie.query.all())
+        return render_template("home/index.html", file=newMovie.filePath(), allMovies=Movie.query.all())
     return render_template("home/register.html", form=form)

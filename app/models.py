@@ -21,3 +21,6 @@ class Movie(db.Model):
 
     def __repr__(self):
         return "<Movie {}>".format(self.nameEN)
+
+    def filePath(self):
+        return self.fileName if self.path == None else self.path + '/' + self.fileName
