@@ -1,13 +1,5 @@
 #coding:utf8
-from flask import Flask
-from flask_sqlalchemy import SQLAlchemy
-import pymysql
-
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@127.0.0.1:8889/videoDevo"
-app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
-
-db = SQLAlchemy(app)
+from . import db
 
 class DevoUser(db.Model):
     __tablename__ = "devoUser"
@@ -18,20 +10,17 @@ class DevoUser(db.Model):
     def __repr__(self):
         return '<User %r>' % self.username
 
-if __name__ == "__main__":
-    db.create_all()
-    admin = DevoUser(id = 1, username = 'zibomeng', pwd = '12345678')
-    guest = DevoUser(id = 2, username = 'yingri', pwd = '11111111')
+class Movie(db.Model):
+    __tablename__ = "movies"
+    id = db.Column(db.Integer, primary_key=True)
+    nameEN = db.Column(db.String(100), unique=True, nullable=True)
+    nameCN = db.Column(db.String(100), nullable=True)
+    path = db.Column(db.String(100), nullable=True)
+    fileName = db.Column(db.String(100), nullable=False)
+    short = db.Column(db.String(100), unique=True, nullable=False)
 
-    db.session.add(admin)
-    db.session.add(guest)
-    db.session.commit()
+    def __repr__(self):
+        return "<Movie {}>".format(self.nameEN)
 
-    print(DevoUser.query.all())
-    print(DevoUser.query.filter_by(username='zibomeng').first())
-
-    db.session.delete(DevoUser.query.filter_by(username='zibomeng').first())
-    db.session.delete(DevoUser.query.filter_by(username='yingri').first())
-    db.session.commit()
-
-    db.drop_all()
+    def filePath(self):
+        return self.fileName if self.path == None else self.path + '/' + self.fileName

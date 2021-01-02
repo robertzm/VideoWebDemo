@@ -1,0 +1,30 @@
+{% extends "home/home.html" %}
+
+{% block content %}
+<h1>Register New File</h1>
+
+<form action="" method="post" novalidate>
+    {{ form.hidden_tag() }}
+    <p>
+        {{ form.nameEN.label }}<br>
+        {{ form.nameEN(size=100) }}
+    </p>
+    <p>
+        {{ form.nameCN.label }}<br>
+        {{ form.nameCN(size=100) }}
+    </p>
+    <p>
+        {{ form.path.label }}<br>
+        {{ form.path(size=100) }}
+    </p>
+    <p>
+        {{ form.short.label }}<br>
+        {{ form.short(size=20) }}
+    </p>
+    <p>
+        {{ form.file.label }}<br>
+        {{form.file()}}
+    </p>
+    <p>{{ form.submit() }}</p>
+</form>
+{% endblock %}

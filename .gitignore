@@ -130,3 +130,7 @@ dmypy.json
  
 # PyCharm
 .idea/
+
+# movie and subtitle
+app/static/movie/
+app/static/subtitle/
