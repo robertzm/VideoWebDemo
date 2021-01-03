@@ -307,7 +307,6 @@ svg {
 }
 
 .movie-list-container {
-    display: inline-block;
     clear: left;
     background: #000;
     width: 100%;
@@ -365,8 +364,7 @@ a {
 @media only screen and (min-width: 1920px) {
 
 .movie-list-container {
-    width: 1920px;
-    display: center;
-    padding: 2rem 0;
+  width: 1920px;
+  padding: 2rem 0;
 }
 }
