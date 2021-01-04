@@ -1,14 +1,18 @@
 {% extends "home/home.html" %}
 
 {% block content %}
-<h1>Add All Movie File</h1>
+<div class="movie-register">
+    <div class="movie-register-title">
+        <h1>Add All Movie File</h1>
+    </div>
 
-<form action="" method="post" novalidate>
-    {{ form.hidden_tag() }}
-    <p>
-        {{ form.path.label }}<br>
-        {{ form.path(size=128) }}
-    </p>
-    <p>{{ form.submit() }}</p>
-</form>
+    <form action="" method="post" novalidate id="movie-register-form">
+        {{ form.hidden_tag() }}
+        <p>
+            {{ form.path.label }}<br>
+            {{ form.path(size=128) }}
+        </p>
+        <p>{{ form.submit() }}</p>
+    </form>
+</div>
 {% endblock %}

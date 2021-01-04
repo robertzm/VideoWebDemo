@@ -13,16 +13,24 @@ import sys
 from .models import Movie, db, MoviePath, MovieInfo
 from .forms import RegisterForm, MoviePathForm
 
+@app.route("/movie/", methods=["GET"])
+def index():
+    allMovies = MovieInfo.query.all()
+
+    if allMovies:
+        first = MoviePath.query.filter(MoviePath.uuid == allMovies[0].uuid).first()
+        return render_template("home/index.html", file=first.file(), allMovies=allMovies)
+    else:
+        return make_response("There's no movie existing at all. ")
+
 @app.route("/movie/<short>", methods=["GET"])
 def index(short):
-    print("I'm here for " + short)
     existing = MoviePath.query.filter(MoviePath.uuid == short).first()
 
     if existing:
-        print("yes")
         return render_template("home/index.html", file=existing.file(), allMovies=MovieInfo.query.all())
     else:
-        make_response("There's no movie for '{}' existing. ".format(short))
+        return make_response("There's no movie for '{}' existing. ".format(short))
 
 @app.route("/", methods=["GET"])
 @deprecation.deprecated(deprecated_in="1.x", removed_in="2.0",
