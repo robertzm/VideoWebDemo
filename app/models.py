@@ -24,3 +24,26 @@ class Movie(db.Model):
 
     def filePath(self):
         return self.fileName if self.path == None else self.path + '/' + self.fileName
+
+class MoviePath(db.Model):
+    __tablename__ = "MoviePath"
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(64), unique=True, nullable=False)
+    filepath = db.Column(db.String(256), nullable=False)
+
+    def __repr__(self):
+        return "<Movie Path {}".format(self.filepath)
+
+    def file(self):
+        return str(self.filepath).split('static/')[1]
+
+class MovieInfo(db.Model):
+    __tablename__ = "MovieInfo"
+    uuid = db.Column(db.String(64), primary_key=True, nullable=False)
+    nameen = db.Column(db.String(128), nullable=True)
+    namecn = db.Column(db.String(128), nullable=True)
+    year = db.Column(db.Integer, nullable=True)
+    director = db.Column(db.String(128), nullable=True)
+
+    def __repr__(self):
+        return "<Movie {}".format(self.nameen + "." + self.year)

@@ -126,26 +126,22 @@
 <div class="movie-list-container linebreak">
     <h1>All movies</h1>
     {% for movie in allMovies %}
-    <ul id="movie.short">
+    <ul id="movie.uid">
         <li>
             <span class="field-name">ID:</span>
-            <span class="field-value">{{ movie.id }}</span>
+            <span class="field-value"><a href={{ movie.uuid }}>{{ movie.uuid }}</a></span>
         </li>
         <li>
             <span class="field-name">Film Name(EN):</span>
-            <span class="field-value">{{ movie.nameEN }}</span>
+            <span class="field-value">{{ movie.nameen }}</span>
         </li>
         <li>
             <span class="field-name">Film Name(CN):</span>
-            <span class="field-value">{{ movie.nameCN }}</span>
+            <span class="field-value">{{ movie.namecn }}</span>
         </li>
         <li>
             <span class="field-name">Year:</span>
-            <span class="field-value">Unknown</span>
-        </li>
-        <li>
-            <span class="field-name">File Name:</span>
-            <span class="field-value"><a href={{ movie.short }}>{{ movie.fileName }}</a></span>
+            <span class="field-value">{{ movie.year }}</span>
         </li>
     </ul>
     {% endfor %}

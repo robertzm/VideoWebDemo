@@ -9,3 +9,8 @@ class RegisterForm(Form):
   short = StringField('shortname', validators=[InputRequired(), Length(max=20)])
   file = FileField('file', validators=[Length(max=100)])
   submit = SubmitField('submit')
+
+class MoviePathForm(Form):
+  path = StringField('path', default='movie', validators=[InputRequired(), Length(max=100)])
+  submit = SubmitField('submit')
+

@@ -134,3 +134,8 @@ dmypy.json
 # movie and subtitle
 app/static/movie/
 app/static/subtitle/
+
+# .DS_Store
+.DS_Store
+*.DS_Store
+.DS_Store?

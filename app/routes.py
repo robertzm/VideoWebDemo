@@ -5,18 +5,22 @@ from flask import current_app as app
 from flask import make_response, render_template, request
 import deprecation
 from wtforms import ValidationError
+import uuid
+import shortuuid
+import os.path
+import sys
 
-from .models import Movie, db
-from .forms import RegisterForm
+from .models import Movie, db, MoviePath, MovieInfo
+from .forms import RegisterForm, MoviePathForm
 
 @app.route("/movie/<short>", methods=["GET"])
 def index(short):
     print("I'm here for " + short)
-    existing = Movie.query.filter(Movie.short == short).first()
+    existing = MoviePath.query.filter(MoviePath.uuid == short).first()
 
     if existing:
         print("yes")
-        return render_template("home/index.html", file=existing.filePath(), allMovies=Movie.query.all())
+        return render_template("home/index.html", file=existing.file(), allMovies=MovieInfo.query.all())
     else:
         make_response("There's no movie for '{}' existing. ".format(short))
 
@@ -52,6 +56,37 @@ def registerMovie():
         except Exception as e:
             return make_response("Add new Movie failed and don't know why. Detail: {}".format(e))
     return render_template("home/register.html", form=form)
+
+@app.route("/addAll", methods=['GET', 'POST'])
+def addAllMovive():
+    form = MoviePathForm()
+    if form.validate_on_submit():
+        if os.path.isdir(os.path.join(sys.path[0], "app", "static", form.path.data)):
+            secureFileName(os.path.join(sys.path[0], "app", "static", form.path.data))
+        else:
+            return make_response("Input is not a directory." )
+    return render_template("home/addAll.html", form=form)
+
+def secureFileName(dir):
+    files = os.listdir(dir)
+    for file in files:
+        filepath = os.path.join(dir, file)
+        if os.path.isdir(filepath):
+            secureFileName(filepath)
+        elif file.startswith('.'):
+            pass
+        else:
+            sf = secure_filename(file)
+            newFile = os.path.join(dir, sf)
+            os.rename(filepath, newFile)
+            existing = MoviePath.query.filter(MoviePath.filepath == newFile).first();
+            if not existing:
+                uid = shortuuid.encode(uuid.uuid1())
+                record = MoviePath(uuid=uid, filepath=newFile)
+                info = MovieInfo(uuid=uid)
+                db.session.add(record)
+                db.session.add(info)
+                db.session.commit()
 
 def validateAndAddMovie(nameEN: str, nameCN: str, path: str, filename: str, short: str):
     if nameEN is None:
