@@ -14,7 +14,7 @@ from .models import Movie, db, MoviePath, MovieInfo
 from .forms import RegisterForm, MoviePathForm
 
 @app.route("/movie/", methods=["GET"])
-def index():
+def __index():
     allMovies = MovieInfo.query.all()
 
     if allMovies:
