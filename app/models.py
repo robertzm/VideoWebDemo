@@ -35,7 +35,8 @@ class MoviePath(db.Model):
         return "<Movie Path {}".format(self.filepath)
 
     def file(self):
-        return str(self.filepath).split('static/')[1]
+        # the replace() is only for windows sys
+        return str(self.filepath).split('static/')[1].replace('\\', '/')
 
 class MovieInfo(db.Model):
     __tablename__ = "MovieInfo"
