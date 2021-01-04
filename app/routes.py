@@ -78,7 +78,9 @@ def secureFileName(dir):
         else:
             sf = secure_filename(file)
             newFile = os.path.join(dir, sf)
-            os.rename(filepath, newFile)
+            if not newFile.__eq__(filepath):
+                print("renamed")
+                os.rename(filepath, newFile)
             existing = MoviePath.query.filter(MoviePath.filepath == newFile).first();
             if not existing:
                 uid = shortuuid.encode(uuid.uuid1())
