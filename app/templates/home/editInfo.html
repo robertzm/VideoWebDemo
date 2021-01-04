@@ -1,0 +1,38 @@
+{% extends "home/home.html" %}
+
+{% block content %}
+<div class="movie-register">
+    <div class="movie-register-title">
+        <h1>Add All Movie File</h1>
+    </div>
+
+    <form action="" method="post" novalidate id="movie-register-form">
+        <p>
+            UUID: <br>
+            {{ uuid }}
+        </p>
+        <p>
+            FilePath: <br>
+            {{ filepath }}
+        </p>
+        {{ form.hidden_tag() }}
+        <p class ="form-label">
+            {{ form.nameEN.label }}<br>
+            {{ form.nameEN(size=128) }}
+        </p>
+        <p class ="form-label">
+            {{ form.nameCN.label }}<br>
+            {{ form.nameCN(size=128) }}
+        </p>
+        <p class ="form-label">
+            {{ form.year.label }}<br>
+            {{ form.year(size=10) }}
+        </p>
+        <p class ="form-label">
+            {{ form.director.label }}<br>
+            {{ form.director(size=128) }}
+        </p>
+        <a>{{ form.submit() }}</a>
+    </form>
+</div>
+{% endblock %}

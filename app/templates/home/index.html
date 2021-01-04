@@ -129,7 +129,7 @@
     <ul id="movie.uid">
         <li>
             <span class="field-name">ID:</span>
-            <span class="field-value"><a href={{ movie.uuid }}>{{ movie.uuid }}</a></span>
+            <span class="field-value"><a href= "{{ prefix }}/movie/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
         </li>
         <li>
             <span class="field-name">Film Name(EN):</span>
@@ -142,6 +142,10 @@
         <li>
             <span class="field-name">Year:</span>
             <span class="field-value">{{ movie.year }}</span>
+        </li>
+        <li>
+            <span class="field-name">Edit Info:</span>
+            <span class="field-value"><a href="edit/{{ movie.uuid }}"> ==> </a></span>
         </li>
     </ul>
     {% endfor %}

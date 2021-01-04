@@ -11,7 +11,8 @@ import os.path
 import sys
 
 from .models import Movie, db, MoviePath, MovieInfo
-from .forms import RegisterForm, MoviePathForm
+from .forms import RegisterForm, MoviePathForm, MovieInfoForm
+
 
 @app.route("/movie/", methods=["GET"])
 def __index():
@@ -19,7 +20,7 @@ def __index():
 
     if allMovies:
         first = MoviePath.query.filter(MoviePath.uuid == allMovies[0].uuid).first()
-        return render_template("home/index.html", file=first.file(), allMovies=allMovies)
+        return render_template("home/index.html", file=first.file(), allMovies=allMovies, prefix="..")
     else:
         return make_response("There's no movie existing at all. ")
 
@@ -28,7 +29,7 @@ def index(short):
     existing = MoviePath.query.filter(MoviePath.uuid == short).first()
 
     if existing:
-        return render_template("home/index.html", file=existing.file(), allMovies=MovieInfo.query.all())
+        return render_template("home/index.html", file=existing.file(), allMovies=MovieInfo.query.all(), prefix="..")
     else:
         return make_response("There's no movie for '{}' existing. ".format(short))
 
@@ -45,7 +46,7 @@ def addMovie():
 
     try:
         newMovie = validateAndAddMovie(nameEN, nameCN, path, fileName, short)
-        return render_template("home/index.html", file=newMovie.filePath(), allMovies=Movie.query.all())
+        return render_template("home/index.html", file=newMovie.filePath(), allMovies=Movie.query.all(), prefix="")
     except ValidationError as ve:
         return make_response("Add new Movie failed because: {}".format(ve))
     except Exception as e:
@@ -58,7 +59,7 @@ def registerMovie():
         fn = secure_filename(form.file.data)
         try:
             newMovie = validateAndAddMovie(form.nameEN.data, form.nameCN.data, form.path.data, fn, form.short.data)
-            return render_template("home/index.html", file=newMovie.filePath(), allMovies=Movie.query.all())
+            return render_template("home/index.html", file=newMovie.filePath(), allMovies=Movie.query.all(), prefix="..")
         except ValidationError as ve:
             return make_response("Add new Movie failed because: {}".format(ve))
         except Exception as e:
@@ -74,6 +75,20 @@ def addAllMovive():
         else:
             return make_response("Input is not a directory." )
     return render_template("home/addAll.html", form=form)
+
+@app.route("/movie/edit/<uuid>", methods=['GET', 'POST'])
+def editMoviveInfo(uuid):
+    path = MoviePath.query.filter(MoviePath.uuid == uuid).first()
+    old = MovieInfo.query.filter(MovieInfo.uuid == uuid).first()
+    infoForm = MovieInfoForm()
+    if infoForm.validate_on_submit():
+        old.nameen = infoForm.nameEN.data
+        old.namecn = infoForm.nameCN.data
+        old.year = infoForm.year.data
+        old.director = infoForm.director.data
+        db.session.commit()
+        return render_template("home/index.html", file=path.file(), allMovies=MovieInfo.query.all(), prefix="../..")
+    return render_template("home/editInfo.html", form=infoForm, uuid=path.uuid, filepath=path.filepath)
 
 def secureFileName(dir):
     files = os.listdir(dir)
