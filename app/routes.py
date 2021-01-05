@@ -5,14 +5,14 @@ from flask import current_app as app
 from flask import make_response, render_template, request
 import deprecation
 from wtforms import ValidationError
-import uuid
-import shortuuid
-import os.path
-import sys
+import uuid, shortuuid
+import sys, os.path
+from app import app_url, app_port
 
 from .models import Movie, db, MoviePath, MovieInfo
 from .forms import RegisterForm, MoviePathForm, MovieInfoForm
 
+url = "http://"+app_url+":"+app_port
 
 @app.route("/movie/", methods=["GET"])
 def __index():
@@ -20,7 +20,7 @@ def __index():
 
     if allMovies:
         first = MoviePath.query.filter(MoviePath.uuid == allMovies[0].uuid).first()
-        return render_template("home/index.html", file=first.file(), allMovies=allMovies, prefix="..")
+        return render_template("home/index.html", file=first.file(), allMovies=allMovies, url=url)
     else:
         return make_response("There's no movie existing at all. ")
 
@@ -29,7 +29,7 @@ def index(short):
     existing = MoviePath.query.filter(MoviePath.uuid == short).first()
 
     if existing:
-        return render_template("home/index.html", file=existing.file(), allMovies=MovieInfo.query.all(), prefix="..")
+        return render_template("home/index.html", file=existing.file(), allMovies=MovieInfo.query.all(), url=url)
     else:
         return make_response("There's no movie for '{}' existing. ".format(short))
 
@@ -46,7 +46,7 @@ def addMovie():
 
     try:
         newMovie = validateAndAddMovie(nameEN, nameCN, path, fileName, short)
-        return render_template("home/index.html", file=newMovie.filePath(), allMovies=Movie.query.all(), prefix="")
+        return render_template("home/index.html", file=newMovie.filePath(), allMovies=Movie.query.all(), url=url)
     except ValidationError as ve:
         return make_response("Add new Movie failed because: {}".format(ve))
     except Exception as e:
@@ -59,7 +59,7 @@ def registerMovie():
         fn = secure_filename(form.file.data)
         try:
             newMovie = validateAndAddMovie(form.nameEN.data, form.nameCN.data, form.path.data, fn, form.short.data)
-            return render_template("home/index.html", file=newMovie.filePath(), allMovies=Movie.query.all(), prefix="..")
+            return render_template("home/index.html", file=newMovie.filePath(), allMovies=Movie.query.all(), url=url)
         except ValidationError as ve:
             return make_response("Add new Movie failed because: {}".format(ve))
         except Exception as e:
@@ -87,8 +87,15 @@ def editMoviveInfo(uuid):
         old.year = infoForm.year.data
         old.director = infoForm.director.data
         db.session.commit()
-        return render_template("home/index.html", file=path.file(), allMovies=MovieInfo.query.all(), prefix="../..")
+        return render_template("home/index.html", file=path.file(), allMovies=MovieInfo.query.all(), url=url)
     return render_template("home/editInfo.html", form=infoForm, uuid=path.uuid, filepath=path.filepath)
+
+@app.route("/movie/delete/<uuid>", methods=['GET', 'POST'])
+def deleteMovie(uuid):
+    MoviePath.query.filter(MoviePath.uuid == uuid).delete()
+    MovieInfo.query.filter(MovieInfo.uuid == uuid).delete()
+    db.session.commit()
+    return __index()
 
 def secureFileName(dir):
     files = os.listdir(dir)

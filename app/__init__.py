@@ -2,6 +2,24 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from ddtrace import patch_all
+import configparser, sys
+
+config = configparser.ConfigParser()
+config.read("app/VideoWebConfig.ini")
+
+if len(sys.argv) > 1 and sys.argv[1] == "PROD":
+    app_url = config['PROD'].get('url', "192.168.0.14")
+    app_port = config['PROD'].get('port', '5000')
+else:
+    app_url = config['LOCAL'].get('url', "127.0.0.1")
+    app_port = config['LOCAL'].get('port', '5000')
+
+db_config = config['MYSQL_DB']
+db_user = db_config.get('user', 'root')
+db_pwd = db_config.get('pwd', 'root')
+db_url = db_config.get('url', '127.0.0.1')
+db_port = db_config.get('port', '8889')
+db_database = db_config.get('database', 'videoDevo')
 
 db = SQLAlchemy()
 patch_all()
@@ -9,7 +27,7 @@ patch_all()
 def create_app():
     """Construct the core application."""
     app = Flask(__name__)
-    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://root:root@127.0.0.1:8889/videoDevo"
+    app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://"+db_user+":"+db_pwd+"@"+db_url+":"+db_port+"/"+db_database
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
     app.config['SECRET_KEY'] = 'DontTellAnyone'
 
