@@ -60,6 +60,7 @@ function formatTime(timeInSeconds) {
   const result = new Date(timeInSeconds * 1000).toISOString().substr(11, 8);
 
   return {
+    hours: result.substr(0, 2),
     minutes: result.substr(3, 2),
     seconds: result.substr(6, 2),
   };
@@ -72,16 +73,16 @@ function initializeVideo() {
   seek.setAttribute('max', videoDuration);
   progressBar.setAttribute('max', videoDuration);
   const time = formatTime(videoDuration);
-  duration.innerText = `${time.minutes}:${time.seconds}`;
-  duration.setAttribute('datetime', `${time.minutes}m ${time.seconds}s`)
+  duration.innerText = `${time.hours}:${time.minutes}:${time.seconds}`;
+  duration.setAttribute('datetime', `${time.hours}h ${time.minutes}m ${time.seconds}s`)
 }
 
 // updateTimeElapsed indicates how far through the video
 // the current playback is by updating the timeElapsed element
 function updateTimeElapsed() {
   const time = formatTime(Math.round(video.currentTime));
-  timeElapsed.innerText = `${time.minutes}:${time.seconds}`;
-  timeElapsed.setAttribute('datetime', `${time.minutes}m ${time.seconds}s`)
+  timeElapsed.innerText = `${time.hours}:${time.minutes}:${time.seconds}`;
+  timeElapsed.setAttribute('datetime', `${time.hours}h ${time.minutes}m ${time.seconds}s`)
 }
 
 // updateProgress indicates how far through the video
@@ -98,7 +99,7 @@ function updateSeekTooltip(event) {
   const skipTo = Math.round((event.offsetX / event.target.clientWidth) * parseInt(event.target.getAttribute('max'), 10));
   seek.setAttribute('data-seek', skipTo)
   const t = formatTime(skipTo);
-  seekTooltip.textContent = `${t.minutes}:${t.seconds}`;
+  seekTooltip.textContent = `${t.hours}:${t.minutes}:${t.seconds}`;
   const rect = video.getBoundingClientRect();
   seekTooltip.style.left = `${event.pageX - rect.left}px`;
 }
