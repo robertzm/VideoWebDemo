@@ -3,6 +3,7 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from ddtrace import patch_all
 import configparser, sys
+from flask_login import LoginManager
 
 config = configparser.ConfigParser()
 config.read("app/VideoWebConfig.ini")
@@ -23,15 +24,18 @@ db_database = db_config.get('database', 'videoDevo')
 
 db = SQLAlchemy()
 patch_all()
+app = Flask(__name__)
+login = LoginManager(app)
 
 def create_app():
     """Construct the core application."""
-    app = Flask(__name__)
+    # app = Flask(__name__)
     app.config["SQLALCHEMY_DATABASE_URI"] = "mysql+pymysql://"+db_user+":"+db_pwd+"@"+db_url+":"+db_port+"/"+db_database
     app.config["SQLALCHEMY_TRACK_MODIFICATIONS"] = True
     app.config['SECRET_KEY'] = 'DontTellAnyone'
 
     db.init_app(app)
+    login.login_view = 'login'
 
     with app.app_context():
         from . import routes  # Import routes
