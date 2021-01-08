@@ -1,0 +1,28 @@
+{% extends "home/home.html" %}
+
+{% block content %}
+<div class="movie-register">
+    <div class="movie-register-title">
+        <h1>Add All Movie File</h1>
+    </div>
+
+    <form action="" method="post" novalidate id="movie-register-form">
+        {{ form.hidden_tag() }}
+        <p>
+            ID: <br>
+            {{ uuid }}
+        </p>
+        <p>
+            Please select subtitle file:<br>
+            {{ form.path.label }}
+            {{ form.path }}
+        </p>
+        <p>
+            Please select subtitle language:<br>
+            {{ form.lang.label }}<br>
+            {{ form.lang }}
+        </p>
+        <a>{{ form.submit() }}</a>
+    </form>
+</div>
+{% endblock %}

@@ -204,8 +204,19 @@ function updateFullscreenButton() {
 
 function updateSubtitleButton() {
     subtitleIcons.forEach(icon => icon.classList.toggle('hidden'));
-  console.log("I'm subtitle button click");
 
+    if (this.getAttribute('subtitle-state') == 'enabled') {
+        this.setAttribute('subtitle-state', 'disabled');
+        for (var i = 0; i < video.textTracks.length; i++) {
+            video.textTracks[i].mode = 'hidden';
+        }
+    } else {
+        this.setAttribute('subtitle-state', 'enabled');
+        for (var i = 0; i < video.textTracks.length; i++) {
+            video.textTracks[i].mode = 'showing';
+        }
+    }
+  console.log("I'm subtitle button click");
 }
 
 // togglePip toggles Picture-in-Picture mode on the video

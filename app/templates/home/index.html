@@ -16,7 +16,7 @@
 
     <video controls class="video" id="video" preload="metadata">
         <source src="{{ url_for('static', filename= file) }}" type="video/webm"/>
-        <!-- track src="{{ url_for('static', filename='subtitle/tenet.vtt') }}" label="English" kind="captions" scrlang="en-CN" default / -->
+        <track src="{{ url_for('static', filename= subtitle) }}" label="English" kind="captions" scrlang="en-CN" default />
     </video>
 
     <div class="video-controls hidden" id="video-controls">

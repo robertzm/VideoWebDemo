@@ -1,5 +1,5 @@
 from flask_wtf import Form, FlaskForm
-from wtforms import StringField, SubmitField, FileField, IntegerField, PasswordField, BooleanField
+from wtforms import StringField, SubmitField, FileField, IntegerField, PasswordField, BooleanField, SelectField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired, Length, NumberRange, DataRequired, Email, EqualTo, ValidationError
 from app.models import User
@@ -10,11 +10,24 @@ class MoviePathForm(Form):
     submit = SubmitField('submit')
 
 
+class SubtitlePathForm(Form):
+    path = StringField('path', default='subtitle', validators=[InputRequired(), Length(max=100)])
+    submit = SubmitField('submit')
+
+
 class MovieInfoForm(Form):
     nameEN = StringField('name-en', validators=[InputRequired(), Length(max=128)])
     nameCN = StringField('name-cn', validators=[Length(max=128)])
     year = IntegerField('year', default=1900, validators=[NumberRange(min=1900, max=2100)])
     director = StringField('director', validators=[Length(max=128)])
+    submit = SubmitField('submit')
+
+
+class SubtitleInfoForm(Form):
+    lang = SelectField('language', choices=[("Simple-Chinese", "Simple-Chinese"),
+                                            ("Traditional-Chinese", "Traditional-Chinese"),
+                                            ("English", "English")])
+    path = SelectField('path')
     submit = SubmitField('submit')
 
 

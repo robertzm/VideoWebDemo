@@ -26,16 +26,6 @@ def load_user(id):
     return User.query.get(int(id))
 
 
-class DevoUser(db.Model):
-    __tablename__ = "devoUser"
-    id = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(100), unique=True)
-    pwd = db.Column(db.String(100))
-
-    def __repr__(self):
-        return '<User %r>' % self.username
-
-
 class MoviePath(db.Model):
     __tablename__ = "MoviePath"
     id = db.Column(db.Integer, primary_key=True)
@@ -60,3 +50,18 @@ class MovieInfo(db.Model):
 
     def __repr__(self):
         return "<Movie {}".format(self.nameen + "." + self.year)
+
+
+class SubtitlePath(db.Model):
+    __tablename__ = "Subtitle"
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(64), unique=True, nullable=True)
+    lang = db.Column(db.String(32))
+    filepath = db.Column(db.String(128), nullable=False)
+
+    def __repr__(self):
+        return "<Subtitle path {}>".format(self.filepath)
+
+    def file(self):
+        # the replace() is only windows sys
+        return str(self.filepath).split('static')[1].replace('\\', '/')
