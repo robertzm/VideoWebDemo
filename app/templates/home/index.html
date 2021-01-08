@@ -129,7 +129,7 @@
     <ul id="movie.uid">
         <li>
             <span class="field-name">ID:</span>
-            <span class="field-value"><a href= "{{ url }}/movie/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
+            <span class="field-value"><a href= "/movie/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
         </li>
         <li>
             <span class="field-name">Film Name(EN):</span>
@@ -145,11 +145,11 @@
         </li>
         <li>
             <span class="field-name">Edit Info:</span>
-            <span class="field-value"><a href="{{ url }}/movie/edit/{{ movie.uuid }}"> ==> </a></span>
+            <span class="field-value"><a href="/movie/edit/{{ movie.uuid }}"> ==> </a></span>
         </li>
         <li>
             <span class="field-name">Delete Movie:</span>
-            <span class="field-value"><a href="{{ url }}/movie/delete/{{ movie.uuid }}"> ==> </a></span>
+            <span class="field-value"><a href="/movie/delete/{{ movie.uuid }}"> ==> </a></span>
         </li>
     </ul>
     {% endfor %}

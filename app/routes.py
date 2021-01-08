@@ -5,13 +5,10 @@ from flask import current_app as app
 from flask import make_response, render_template, request, redirect, url_for, flash
 import uuid, shortuuid
 import sys, os.path
-from app import app_url, app_port
 from flask_login import current_user, login_required, login_user, logout_user
 
 from .models import db, MoviePath, MovieInfo, User
 from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm
-
-url = "http://"+app_url+":"+app_port
 
 @app.route("/movie/", methods=["GET"])
 def __index():
@@ -21,7 +18,7 @@ def __index():
 
     if allMovies:
         first = MoviePath.query.filter(MoviePath.uuid == allMovies[0].uuid).first()
-        return render_template("home/index.html", file=first.file(), allMovies=allMovies, url=url)
+        return render_template("home/index.html", file=first.file(), allMovies=allMovies)
     else:
         return make_response("There's no movie existing at all. ")
 
@@ -32,7 +29,7 @@ def index(short):
     existing = MoviePath.query.filter(MoviePath.uuid == short).first()
 
     if existing:
-        return render_template("home/index.html", file=existing.file(), allMovies=MovieInfo.query.all(), url=url)
+        return render_template("home/index.html", file=existing.file(), allMovies=MovieInfo.query.all())
     else:
         return make_response("There's no movie for '{}' existing. ".format(short))
 
@@ -61,7 +58,7 @@ def editMoviveInfo(uuid):
         old.year = infoForm.year.data
         old.director = infoForm.director.data
         db.session.commit()
-        return render_template("home/index.html", file=path.file(), allMovies=MovieInfo.query.all(), url=url)
+        return render_template("home/index.html", file=path.file(), allMovies=MovieInfo.query.all())
     return render_template("home/editInfo.html", form=infoForm, uuid=path.uuid, filepath=path.filepath)
 
 @app.route("/movie/delete/<uuid>", methods=['GET', 'POST'])
