@@ -35,10 +35,6 @@ class MoviePath(db.Model):
     def __repr__(self):
         return "<Movie Path {}".format(self.filepath)
 
-    def file(self):
-        # the replace() is only for windows sys
-        return str(self.filepath).split('static')[1].replace('\\', '/')[1:]
-
 
 class MovieInfo(db.Model):
     __tablename__ = "MovieInfo"
@@ -61,7 +57,3 @@ class SubtitlePath(db.Model):
 
     def __repr__(self):
         return "<Subtitle path {}>".format(self.filepath)
-
-    def file(self):
-        # the replace() is only windows sys
-        return str(self.filepath).split('static')[1].replace('\\', '/')[1:]

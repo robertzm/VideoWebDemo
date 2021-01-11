@@ -15,54 +15,22 @@ from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm, Su
 
 @app.route("/", methods=["GET"])
 def home():
-    return __index()
-
-@app.route("/movie/", methods=["GET"])
-def __index():
-    if not current_user.is_authenticated:
-        return redirect(url_for('loginUser'))
-    allMovies = MovieInfo.query.all()
-
-    if allMovies:
-        first = MoviePath.query.filter(MoviePath.uuid == allMovies[0].uuid).first()
-        subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == allMovies[0].uuid).first()
-        return render_template("home/index.html", file=first.filepath,
-                               subtitle=None if subtitle == None else subtitle.filepath,
-                               allMovies=allMovies)
-    else:
-        return make_response("There's no movie existing at all. ")
-
-@app.route("/temp", methods=['GET'])
-def temp():
-    allMovie = MoviePath.query.all()
-
-    for movie in allMovie:
-        path = movie.file()
-        movie.filepath = path
-        db.session.commit()
-
-    allSubtitle = SubtitlePath.query.all()
-
-    for subtitle in allSubtitle:
-        path = subtitle.file()
-        subtitle.filepath = path
-        db.session.commit()
-
-    return make_response("done")
-
+    return list()
 
 
 @app.route("/movie/<short>", methods=["GET"])
 def index(short):
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
+
     existing = MoviePath.query.filter(MoviePath.uuid == short).first()
+    info = MovieInfo.query.filter(MovieInfo.uuid == short).first()
     subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == short).first()
 
     if existing:
         return render_template("home/index.html", file=existing.filepath,
-                               subtitle=None if subtitle == None else subtitle.filepath,
-                               allMovies=MovieInfo.query.all())
+                               movie=info,
+                               subtitle=subtitle)
     else:
         return make_response("There's no movie for '{}' existing. ".format(short))
 
@@ -106,10 +74,7 @@ def editMoviveInfo(uuid):
         old.year = infoForm.year.data
         old.director = infoForm.director.data
         db.session.commit()
-        subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == uuid).first()
-        return render_template("home/index.html", file=path.filepath,
-                               subtitle=None if subtitle==None else subtitle.filepath,
-                               allMovies=MovieInfo.query.all())
+        return index(uuid)
     return render_template("home/editInfo.html", form=infoForm, uuid=path.uuid, filepath=path.filepath)
 
 
@@ -125,11 +90,9 @@ def editMoviveSubtitle(uuid):
         old.uuid = uuid
         old.lang = form.lang.data
         db.session.commit()
-        subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == uuid).first()
-        return render_template("home/index.html", file=MoviePath.query.filter(MoviePath.uuid == uuid).first().filepath,
-                               subtitle=None if subtitle==None else subtitle.filepath,
-                               allMovies=MovieInfo.query.all())
+        return index(uuid)
     return render_template("home/editSubtitle.html", uuid=uuid, form=form)
+
 
 @app.route("/subtitle/delete/<uuid>", methods=['GET', 'POST'])
 def deleteSubtitle(uuid):
@@ -147,7 +110,7 @@ def deleteMovie(uuid):
     MoviePath.query.filter(MoviePath.uuid == uuid).delete()
     MovieInfo.query.filter(MovieInfo.uuid == uuid).delete()
     db.session.commit()
-    return __index()
+    return list()
 
 
 def secureAndAddFile(dir: str, addMethod):
@@ -222,6 +185,7 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('loginUser'))
     return render_template('home/register.html', title='Register', form=form)
+
 
 @app.route('/list', methods=['GET'])
 def list():

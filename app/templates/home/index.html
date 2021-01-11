@@ -17,7 +17,7 @@
     <video controls class="video" id="video" preload="metadata">
         <source src="{{ url_for('static', filename= file) }}" type="video/webm"/>
         {% if subtitle is not none %}
-        <track src="{{ url_for('static', filename= subtitle) }}" label="English" kind="captions" scrlang="en-CN" default />
+        <track src="{{ url_for('static', filename= subtitle.filepath) }}" label="English" kind="captions" scrlang="en-CN" default />
         {% endif %}
     </video>
 
@@ -126,8 +126,6 @@
 </svg>
 
 <div class="movie-list-container linebreak">
-    <h1>All movies</h1>
-    {% for movie in allMovies %}
     <ul id="movie.uid">
         <li>
             <span class="field-name">ID:</span>
@@ -146,9 +144,24 @@
             <span class="field-value">{{ movie.year }}</span>
         </li>
         <li>
+            <span class="field-name">Director:</span>
+            <span class="field-value">{{ movie.director }}</span>
+        </li>
+        <li>
             <span class="field-name">Edit Info:</span>
             <span class="field-value"><a href="/movie/edit/{{ movie.uuid }}"> ==> </a></span>
         </li>
+        {% if subtitle is none %}
+        <li>
+            <span class="field-name">Subtitle:</span>
+            <span class="field-value"><a href="/link/subtitle/{{ movie.uuid }}"> Add ==> </a></span>
+        </li>
+        {% else %}
+        <li>
+            <span class="field-name">Subtitle:</span>
+            <span class="field-value"><a href="/subtitle/delete/{{ movie.uuid }}"> Delete ==> </a></span>
+        </li>
+        {% endif %}
         <li>
             <span class="field-name">Delete Movie:</span>
             <span class="field-value"><a href="/movie/delete/{{ movie.uuid }}"> ==> </a></span>
