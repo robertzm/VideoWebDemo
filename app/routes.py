@@ -7,11 +7,20 @@ import uuid, shortuuid
 import sys, os.path
 from flask_login import current_user, login_required, login_user, logout_user
 
-from .models import db, MoviePath, MovieInfo, User, SubtitlePath, InvitationCode
+from .models import db, MoviePath, MovieInfo, User, SubtitlePath, InvitationCode, MovieInfoV2
 from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm, SubtitlePathForm, SubtitleInfoForm
 
 
 # I hate this total mess. Let's get most logic out of here !!!!
+
+@app.route("/migrate", methods=['GET'])
+def migrate():
+    allMovies = MovieInfo.query.all()
+    for movie in allMovies:
+        newInfo = MovieInfoV2(uuid=movie.uusid, nameen=movie.nameen, namecn=movie.namecn, year=movie.year, director=movie.director)
+        db.session.add(newInfo)
+        db.session.commit()
+    return make_response("done")
 
 @app.route("/", methods=["GET"])
 def home():

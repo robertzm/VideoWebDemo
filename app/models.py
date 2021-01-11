@@ -48,6 +48,23 @@ class MovieInfo(db.Model):
         return "<Movie {}".format(self.nameen + "." + self.year)
 
 
+class MovieInfoV2(db.Model):
+    __tablename__ = "MovieInfoV2"
+    uuid = db.Column(db.String(64), primary_key=True, nullable=False)
+    nameen = db.Column(db.String(128), nullable=True)
+    namecn = db.Column(db.String(128), nullable=True)
+    year = db.Column(db.Integer, nullable=True)
+    director = db.Column(db.String(128), nullable=True)
+    actor = db.Column(db.Strign(128), nullable=True)
+    imdb = db.Column(db.Float, nullable=True)
+    douban = db.Column(db.Float, nullable=True)
+    genre = db.Column(db.String(128), nullable=True)
+    comment = db.Column(db.String(512), nullable=True)
+
+    def __repr__(self):
+        return "<Movie {}".format(self.nameen + "." + self.year)
+
+
 class SubtitlePath(db.Model):
     __tablename__ = "Subtitle"
     id = db.Column(db.Integer, primary_key=True)
@@ -57,6 +74,7 @@ class SubtitlePath(db.Model):
 
     def __repr__(self):
         return "<Subtitle path {}>".format(self.filepath)
+
 
 class InvitationCode(db.Model):
     __tablename__ = "Invitation"
