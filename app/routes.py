@@ -131,10 +131,10 @@ def secureAndAddFile(dir: str, addMethod):
 
 
 def addMovie(filepath: str) -> None:
-    existing = MoviePath.query.filter(MoviePath.filepath == filepath).first()
+    absPath = filepath.split('static')[1].replace('\\', '/')[1:]
+    existing = MoviePath.query.filter(MoviePath.filepath == absPath).first()
     if not existing:
         uid = shortuuid.encode(uuid.uuid1())
-        absPath = filepath.split('static')[1].replace('\\', '/')[1:]
         record = MoviePath(uuid=uid, filepath=absPath)
         info = MovieInfo(uuid=uid)
         db.session.add(record)
@@ -143,9 +143,9 @@ def addMovie(filepath: str) -> None:
 
 
 def addSubtitle(filepath: str) -> None:
-    existing = SubtitlePath.query.filter(SubtitlePath.filepath == filepath).first()
+    absPath = filepath.split('static')[1].replace('\\', '/')[1:]
+    existing = SubtitlePath.query.filter(SubtitlePath.filepath == absPath).first()
     if not existing:
-        absPath = filepath.split('static')[1].replace('\\', '/')[1:]
         record = SubtitlePath(filepath=absPath)
         db.session.add(record)
         db.session.commit()
