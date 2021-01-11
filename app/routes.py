@@ -75,7 +75,7 @@ def editMoviveInfo(uuid):
         old.director = infoForm.director.data
         db.session.commit()
         return index(uuid)
-    return render_template("home/editInfo.html", form=infoForm, uuid=path.uuid, filepath=path.filepath)
+    return render_template("home/editInfo.html", form=infoForm, uuid=path.uuid, filepath=path.filepath, old=old)
 
 
 @app.route("/link/subtitle/<uuid>", methods=['GET', 'POST'])
