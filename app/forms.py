@@ -1,5 +1,5 @@
 from flask_wtf import Form, FlaskForm
-from wtforms import StringField, SubmitField, FileField, IntegerField, PasswordField, BooleanField, SelectField
+from wtforms import StringField, SubmitField, IntegerField, PasswordField, BooleanField, SelectField, DecimalField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired, Length, NumberRange, DataRequired, Email, EqualTo, ValidationError
 from app.models import User, InvitationCode
@@ -20,6 +20,11 @@ class MovieInfoForm(Form):
     nameCN = StringField('name-cn', validators=[Length(max=128)])
     year = IntegerField('year', default=1900, validators=[NumberRange(min=1900, max=2100)])
     director = StringField('director', validators=[Length(max=128)])
+    actor = StringField('actor', validators=[Length(max=128)])
+    imdb = DecimalField('IMDB', default=0, validators=[NumberRange(min=0, max=10)])
+    douban = DecimalField('DouBan', default=0, validators=[NumberRange(min=0, max=10)])
+    genre = StringField('Genre', validators=[Length(max=128)])
+    comment = StringField('Comment')
     submit = SubmitField('submit')
 
 

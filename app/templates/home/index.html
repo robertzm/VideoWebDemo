@@ -17,7 +17,8 @@
     <video controls class="video" id="video" preload="metadata">
         <source src="{{ url_for('static', filename= file) }}" type="video/webm"/>
         {% if subtitle is not none %}
-        <track src="{{ url_for('static', filename= subtitle.filepath) }}" label="English" kind="captions" scrlang="en-CN" default />
+        <track src="{{ url_for('static', filename= subtitle.filepath) }}" label="English" kind="captions"
+               scrlang="en-CN" default/>
         {% endif %}
     </video>
 
@@ -130,7 +131,7 @@
     <ul id="movie.uid">
         <li>
             <span class="field-name">ID:</span>
-            <span class="field-value"><a href= "/movie/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
+            <span class="field-value"><a href="/movie/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
         </li>
         <li>
             <span class="field-name">Film Name(EN):</span>
@@ -145,8 +146,21 @@
             <span class="field-value">{{ movie.year }}</span>
         </li>
         <li>
+            <span class="field-name">Genre:</span>
+            <span class="field-value">{{ movie.genre }}</span>
+        </li>
+        <li>
             <span class="field-name">Director:</span>
             <span class="field-value">{{ movie.director }}</span>
+        </li>
+        <li>
+            <span class="field-name">Actors:</span>
+            <span class="field-value">{{ movie.actor }}</span>
+        </li>
+        <li>
+            <span class="field-name">Rating:</span>
+            <span class="field-value">IMDB: {{ movie.imdb }}</span>
+            <span class="field-value">DouBan: {{ movie.douban }}</span>
         </li>
         <li>
             <span class="field-name">Edit Info:</span>

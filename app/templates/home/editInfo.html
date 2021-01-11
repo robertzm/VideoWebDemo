@@ -32,6 +32,22 @@
             {{ form.director.label }}<br>
             {{ form.director(size=128, value=old.director) }}
         </p>
+        <p class ="form-label">
+            {{ form.actor.label }}<br>
+            {{ form.actor(size=128, value=old.actor) }}
+        </p>
+        <p class ="form-label">
+            {{ form.genre.label }}<br>
+            {{ form.genre(size=128, value=old.genre) }}
+        </p>
+        <p class ="form-label">
+            {{ form.imdb.label }}<br>
+            {{ form.imdb(size=128, value=old.imdb) }}
+        </p>
+        <p class ="form-label">
+            {{ form.douban.label }}<br>
+            {{ form.douban(size=128, value=old.douban) }}
+        </p>
         <a>{{ form.submit() }}</a>
     </form>
 </div>

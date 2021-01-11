@@ -36,13 +36,17 @@
             <span class="field-value">{{ movie.director }}</span>
         </li>
         <li>
+            <span class="field-name">Genre:</span>
+            <span class="field-value">{{ movie.genre }}</span>
+        </li>
+        <li>
             <span class="field-name">Actors:</span>
-            <span class="field-value">Unknown</span>
+            <span class="field-value">{{ movie.actor }}</span>
         </li>
         <li>
             <span class="field-name">Rating:</span>
-            <span class="field-value">IMDB: </span>
-            <span class="field-value">DouBan: </span>
+            <span class="field-value">IMDB: {{ movie.imdb }}</span>
+            <span class="field-value">DouBan: {{ movie.douban }}</span>
         </li>
     </ul>
     {% endfor %}

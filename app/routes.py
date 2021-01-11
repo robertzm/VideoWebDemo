@@ -82,6 +82,10 @@ def editMoviveInfo(uuid):
         old.namecn = infoForm.nameCN.data
         old.year = infoForm.year.data
         old.director = infoForm.director.data
+        old.actor = infoForm.actor.data
+        old.genre = infoForm.genre.data
+        old.imdb = infoForm.imdb.data
+        old.douban = infoForm.douban.data
         db.session.commit()
         return index(uuid)
     return render_template("home/editInfo.html", form=infoForm, uuid=path.uuid, filepath=path.filepath, old=old)
