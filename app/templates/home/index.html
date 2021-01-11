@@ -16,7 +16,9 @@
 
     <video controls class="video" id="video" preload="metadata">
         <source src="{{ url_for('static', filename= file) }}" type="video/webm"/>
+        {% if subtitle is not none %}
         <track src="{{ url_for('static', filename= subtitle) }}" label="English" kind="captions" scrlang="en-CN" default />
+        {% endif %}
     </video>
 
     <div class="video-controls hidden" id="video-controls">

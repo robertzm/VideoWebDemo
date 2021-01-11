@@ -37,7 +37,7 @@ class MoviePath(db.Model):
 
     def file(self):
         # the replace() is only for windows sys
-        return str(self.filepath).split('static')[1].replace('\\', '/')
+        return str(self.filepath).split('static')[1].replace('\\', '/')[1:]
 
 
 class MovieInfo(db.Model):
@@ -64,4 +64,4 @@ class SubtitlePath(db.Model):
 
     def file(self):
         # the replace() is only windows sys
-        return str(self.filepath).split('static')[1].replace('\\', '/')
+        return str(self.filepath).split('static')[1].replace('\\', '/')[1:]

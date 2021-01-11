@@ -1,0 +1,40 @@
+{% extends "home/home.html" %}
+
+{% block content %}
+<div class="movie-list-container linebreak">
+    <h1>All movies</h1>
+    {% for movie in movies %}
+    <ul id="movie.uid">
+        <li>
+            <span class="field-name">ID:</span>
+            <span class="field-value"><a href= "/movie/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
+        </li>
+        <li>
+            <span class="field-name">Film Name(EN):</span>
+            <span class="field-value">{{ movie.nameen }}</span>
+        </li>
+        <li>
+            <span class="field-name">Film Name(CN):</span>
+            <span class="field-value">{{ movie.namecn }}</span>
+        </li>
+        <li>
+            <span class="field-name">Year:</span>
+            <span class="field-value">{{ movie.year }}</span>
+        </li>
+        <li>
+            <span class="field-name">Director:</span>
+            <span class="field-value">{{ movie.director }}</span>
+        </li>
+        <li>
+            <span class="field-name">Actors:</span>
+            <span class="field-value">Unknown</span>
+        </li>
+        <li>
+            <span class="field-name">Rating:</span>
+            <span class="field-value">IMDB: </span>
+            <span class="field-value">DouBan: </span>
+        </li>
+    </ul>
+    {% endfor %}
+</div>
+{% endblock %}

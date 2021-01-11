@@ -26,9 +26,30 @@ def __index():
     if allMovies:
         first = MoviePath.query.filter(MoviePath.uuid == allMovies[0].uuid).first()
         subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == allMovies[0].uuid).first()
-        return render_template("home/index.html", file=first.file(), subtitle=subtitle, allMovies=allMovies)
+        return render_template("home/index.html", file=first.filepath,
+                               subtitle=None if subtitle == None else subtitle.filepath,
+                               allMovies=allMovies)
     else:
         return make_response("There's no movie existing at all. ")
+
+@app.route("/temp", methods=['GET'])
+def temp():
+    allMovie = MoviePath.query.all()
+
+    for movie in allMovie:
+        path = movie.file()
+        movie.filepath = path
+        db.session.commit()
+
+    allSubtitle = SubtitlePath.query.all()
+
+    for subtitle in allSubtitle:
+        path = subtitle.file()
+        subtitle.filepath = path
+        db.session.commit()
+
+    return make_response("done")
+
 
 
 @app.route("/movie/<short>", methods=["GET"])
@@ -39,7 +60,9 @@ def index(short):
     subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == short).first()
 
     if existing:
-        return render_template("home/index.html", file=existing.file(), subtitle=subtitle, allMovies=MovieInfo.query.all())
+        return render_template("home/index.html", file=existing.filepath,
+                               subtitle=None if subtitle == None else subtitle.filepath,
+                               allMovies=MovieInfo.query.all())
     else:
         return make_response("There's no movie for '{}' existing. ".format(short))
 
@@ -84,7 +107,9 @@ def editMoviveInfo(uuid):
         old.director = infoForm.director.data
         db.session.commit()
         subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == uuid).first()
-        return render_template("home/index.html", file=path.file(), subtitle=subtitle, allMovies=MovieInfo.query.all())
+        return render_template("home/index.html", file=path.filepath,
+                               subtitle=None if subtitle==None else subtitle.filepath,
+                               allMovies=MovieInfo.query.all())
     return render_template("home/editInfo.html", form=infoForm, uuid=path.uuid, filepath=path.filepath)
 
 
@@ -101,10 +126,18 @@ def editMoviveSubtitle(uuid):
         old.lang = form.lang.data
         db.session.commit()
         subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == uuid).first()
-        return render_template("home/index.html", file=MoviePath.query.filter(MoviePath.uuid == uuid).first().file(),
-                               subtitle=subtitle,
+        return render_template("home/index.html", file=MoviePath.query.filter(MoviePath.uuid == uuid).first().filepath,
+                               subtitle=None if subtitle==None else subtitle.filepath,
                                allMovies=MovieInfo.query.all())
     return render_template("home/editSubtitle.html", uuid=uuid, form=form)
+
+@app.route("/subtitle/delete/<uuid>", methods=['GET', 'POST'])
+def deleteSubtitle(uuid):
+    if not current_user.is_authenticated:
+        return redirect(url_for('loginUser'))
+    SubtitlePath.query.filter(SubtitlePath.uuid == uuid).delete()
+    db.session.commit()
+    return index(uuid)
 
 
 @app.route("/movie/delete/<uuid>", methods=['GET', 'POST'])
@@ -138,7 +171,8 @@ def addMovie(filepath: str) -> None:
     existing = MoviePath.query.filter(MoviePath.filepath == filepath).first()
     if not existing:
         uid = shortuuid.encode(uuid.uuid1())
-        record = MoviePath(uuid=uid, filepath=filepath)
+        absPath = filepath.split('static')[1].replace('\\', '/')[1:]
+        record = MoviePath(uuid=uid, filepath=absPath)
         info = MovieInfo(uuid=uid)
         db.session.add(record)
         db.session.add(info)
@@ -148,7 +182,8 @@ def addMovie(filepath: str) -> None:
 def addSubtitle(filepath: str) -> None:
     existing = SubtitlePath.query.filter(SubtitlePath.filepath == filepath).first()
     if not existing:
-        record = SubtitlePath(filepath=filepath)
+        absPath = filepath.split('static')[1].replace('\\', '/')[1:]
+        record = SubtitlePath(filepath=absPath)
         db.session.add(record)
         db.session.commit()
 
@@ -187,3 +222,10 @@ def register():
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('loginUser'))
     return render_template('home/register.html', title='Register', form=form)
+
+@app.route('/list', methods=['GET'])
+def list():
+    if not current_user.is_authenticated:
+        return redirect(url_for('loginUser'))
+    allMovies = MovieInfo.query.all()
+    return render_template("home/list.html", movies=allMovies)
