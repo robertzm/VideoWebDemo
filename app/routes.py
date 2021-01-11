@@ -154,7 +154,7 @@ def addSubtitle(filepath: str) -> None:
 @app.route("/login", methods=['GET', 'POST'])
 def loginUser():
     if current_user.is_authenticated:
-        return redirect(url_for('__index'))
+        return redirect(url_for('home'))
     form = LoginForm()
     if form.validate_on_submit():
         user = User.query.filter_by(username=form.username.data).first()
@@ -162,7 +162,7 @@ def loginUser():
             flash('Invalid username or password')
             return redirect(url_for('loginUser'))
         login_user(user, remember=form.remember_me.data)
-        return redirect(url_for('__index'))
+        return redirect(url_for('home'))
     return render_template('home/login.html', title='Sign In', form=form)
 
 
@@ -175,7 +175,7 @@ def logoutUser():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
     if current_user.is_authenticated:
-        return redirect(url_for('__index'))
+        return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
         user = User(username=form.username.data, email=form.email.data)
