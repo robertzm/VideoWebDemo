@@ -57,3 +57,13 @@ class SubtitlePath(db.Model):
 
     def __repr__(self):
         return "<Subtitle path {}>".format(self.filepath)
+
+class InvitationCode(db.Model):
+    __tablename__ = "Invitation"
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(64), unique=True, nullable=False)
+    parent = db.Column(db.String(64))
+    used = db.Column(db.Boolean, default=False)
+
+    def __repr__(self):
+        return "<InvitationCode {}>".format(self.uuid)

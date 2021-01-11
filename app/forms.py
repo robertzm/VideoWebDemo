@@ -2,7 +2,7 @@ from flask_wtf import Form, FlaskForm
 from wtforms import StringField, SubmitField, FileField, IntegerField, PasswordField, BooleanField, SelectField
 from wtforms.fields.html5 import EmailField
 from wtforms.validators import InputRequired, Length, NumberRange, DataRequired, Email, EqualTo, ValidationError
-from app.models import User
+from app.models import User, InvitationCode
 
 
 class MoviePathForm(Form):
@@ -44,6 +44,7 @@ class RegistrationForm(FlaskForm):
     password = PasswordField('Password', validators=[DataRequired()])
     password2 = PasswordField(
         'Repeat Password', validators=[DataRequired(), EqualTo('password')])
+    invitationCode = StringField('InvitationCode', validators=[DataRequired()])
     submit = SubmitField('Register')
 
     def validate_username(self, username):
@@ -55,3 +56,8 @@ class RegistrationForm(FlaskForm):
         user = User.query.filter_by(email=email.data).first()
         if user is not None:
             raise ValidationError('Please use a different email address.')
+
+    def validate_invitationCode(self, invitationCode):
+        record = InvitationCode.query.filter_by(uuid=invitationCode.data).first()
+        if record is None or record.used == True:
+            raise ValidationError('InvitationCode invalid, please use another one. ')

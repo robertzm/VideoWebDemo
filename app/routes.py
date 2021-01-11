@@ -7,7 +7,7 @@ import uuid, shortuuid
 import sys, os.path
 from flask_login import current_user, login_required, login_user, logout_user
 
-from .models import db, MoviePath, MovieInfo, User, SubtitlePath
+from .models import db, MoviePath, MovieInfo, User, SubtitlePath, InvitationCode
 from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm, SubtitlePathForm, SubtitleInfoForm
 
 
@@ -178,9 +178,12 @@ def register():
         return redirect(url_for('home'))
     form = RegistrationForm()
     if form.validate_on_submit():
+        invitationCode = form.invitationCode.data
+        record = InvitationCode.query.filter(InvitationCode.uuid == invitationCode).first()
         user = User(username=form.username.data, email=form.email.data)
         user.set_password(form.password.data)
         db.session.add(user)
+        record.used = True
         db.session.commit()
         flash('Congratulations, you are now a registered user!')
         return redirect(url_for('loginUser'))
@@ -193,3 +196,16 @@ def list():
         return redirect(url_for('loginUser'))
     allMovies = MovieInfo.query.all()
     return render_template("home/list.html", movies=allMovies)
+
+
+@app.route('/generateCode', methods=['GET'])
+def generate():
+    if not current_user.is_authenticated:
+        return redirect(url_for('loginUser'))
+    uid = shortuuid.encode(uuid.uuid1())
+    parent = current_user.username
+    invitationCode = InvitationCode(uuid=uid, parent=parent)
+    db.session.add(invitationCode)
+    db.session.commit()
+    flash('Congratulations, you can invite your friend with code: {}'.format(uid))
+    return list()

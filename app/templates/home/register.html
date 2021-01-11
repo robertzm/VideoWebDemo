@@ -2,6 +2,16 @@
 
 {% block content %}
 <div class="movie-register">
+    {% with messages = get_flashed_messages() %}
+    {% if messages %}
+    <ul class=flashes>
+        {% for message in messages %}
+        <li>{{ message }}</li>
+        {% endfor %}
+    </ul>
+    {% endif %}
+    {% endwith %}
+
     <div class="movie-register-title">
         <h1>Login</h1>
     </div>
@@ -36,6 +46,14 @@
             <span style="color: red;">[{{ error }}]</span>
             {% endfor %}
         </p>
+        <p>
+            {{ form.invitationCode.label }}<br>
+            {{ form.invitationCode(size=32) }}<br>
+            {% for error in form.invitationCode.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+            {% endfor %}
+        </p>
+
         <p>{{ form.submit() }}</p>
     </form>
 </div>
