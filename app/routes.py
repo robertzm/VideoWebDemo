@@ -17,7 +17,7 @@ from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm, Su
 def migrate():
     allMovies = MovieInfo.query.all()
     for movie in allMovies:
-        newInfo = MovieInfoV2(uuid=movie.uusid, nameen=movie.nameen, namecn=movie.namecn, year=movie.year, director=movie.director)
+        newInfo = MovieInfoV2(uuid=movie.uuid, nameen=movie.nameen, namecn=movie.namecn, year=movie.year, director=movie.director)
         db.session.add(newInfo)
         db.session.commit()
     return make_response("done")
@@ -33,7 +33,7 @@ def index(short):
         return redirect(url_for('loginUser'))
 
     existing = MoviePath.query.filter(MoviePath.uuid == short).first()
-    info = MovieInfo.query.filter(MovieInfo.uuid == short).first()
+    info = MovieInfoV2.query.filter(MovieInfoV2.uuid == short).first()
     subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == short).first()
 
     if existing:
@@ -75,7 +75,7 @@ def editMoviveInfo(uuid):
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
     path = MoviePath.query.filter(MoviePath.uuid == uuid).first()
-    old = MovieInfo.query.filter(MovieInfo.uuid == uuid).first()
+    old = MovieInfoV2.query.filter(MovieInfoV2.uuid == uuid).first()
     infoForm = MovieInfoForm()
     if infoForm.validate_on_submit():
         old.nameen = infoForm.nameEN.data
@@ -117,7 +117,7 @@ def deleteMovie(uuid):
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
     MoviePath.query.filter(MoviePath.uuid == uuid).delete()
-    MovieInfo.query.filter(MovieInfo.uuid == uuid).delete()
+    MovieInfoV2.query.filter(MovieInfoV2.uuid == uuid).delete()
     db.session.commit()
     return list()
 
@@ -145,7 +145,7 @@ def addMovie(filepath: str) -> None:
     if not existing:
         uid = shortuuid.encode(uuid.uuid1())
         record = MoviePath(uuid=uid, filepath=absPath)
-        info = MovieInfo(uuid=uid)
+        info = MovieInfoV2(uuid=uid)
         db.session.add(record)
         db.session.add(info)
         db.session.commit()
@@ -203,7 +203,7 @@ def register():
 def list():
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
-    allMovies = MovieInfo.query.all()
+    allMovies = MovieInfoV2.query.all()
     return render_template("home/list.html", movies=allMovies)
 
 

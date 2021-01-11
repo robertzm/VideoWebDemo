@@ -55,7 +55,7 @@ class MovieInfoV2(db.Model):
     namecn = db.Column(db.String(128), nullable=True)
     year = db.Column(db.Integer, nullable=True)
     director = db.Column(db.String(128), nullable=True)
-    actor = db.Column(db.Strign(128), nullable=True)
+    actor = db.Column(db.String(128), nullable=True)
     imdb = db.Column(db.Float, nullable=True)
     douban = db.Column(db.Float, nullable=True)
     genre = db.Column(db.String(128), nullable=True)
