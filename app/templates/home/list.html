@@ -13,6 +13,7 @@
     {% endwith %}
 
     <h1>All movies</h1>
+    <p style="color:red;">Sort by: <a href="/list?sortBy=year&order=desc">year/desc</a>  <a href="/list?sortBy=year&order=asc">year/asc</a></p>
     {% for movie in movies %}
     <ul id="movie.uid">
         <li>
