@@ -6,7 +6,6 @@ from flask import make_response, render_template, request, redirect, url_for, fl
 import uuid, shortuuid
 import sys, os.path
 from flask_login import current_user, login_required, login_user, logout_user
-from sqlalchemy import asc, desc
 
 from .models import db, MoviePath, MovieInfo, User, SubtitlePath, InvitationCode, MovieInfoV2
 from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm, SubtitlePathForm, SubtitleInfoForm
@@ -208,24 +207,7 @@ def register():
 def list():
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
-    base = MovieInfoV2.query
-    sortBy = request.args.get('sortBy')
-    order = request.args.get('order')
-    if sortBy and sortBy in dir(MovieInfoV2):
-        if order == 'asc':
-            base = base.order_by(asc(sortBy))
-        else:
-            base = base.order_by(desc(sortBy))
-    directBy = request.args.get('directBy')
-    if directBy:
-        base = base.filter(MovieInfoV2.director.contains(directBy))
-    actBy = request.args.get('actBy')
-    if actBy:
-        base = base.filter(MovieInfoV2.actor.contains(actBy))
-    genre = request.args.get('genre')
-    if genre:
-        base = base.filter(MovieInfoV2.genre.contains(genre))
-    allMovies = base.all()
+    allMovies = MovieInfoV2.query.all()
     return render_template("home/list.html", movies=allMovies)
 
 
