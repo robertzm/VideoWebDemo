@@ -33,36 +33,15 @@
         </li>
         <li>
             <span class="field-name">Director:</span>
-            <span class="field-value">
-                {% if movie.director %}
-                {% set directors = movie.director.split('/') %}
-                {% for director in directors %}
-                    <a href="/list?directBy={{director}}">{{director}}</a> /
-                {% endfor %}
-                {% endif %}
-            </span>
+            <span class="field-value">{{ movie.director }}</span>
         </li>
         <li>
             <span class="field-name">Genre:</span>
-            <span class="field-value">
-                {% if movie.genre %}
-                {% set genre = movie.genre.split('/') %}
-                {% for g in genre %}
-                    <a href="/list?genre={{g}}">{{g}}</a> /
-                {% endfor %}
-                {% endif %}
-            </span>
+            <span class="field-value">{{ movie.genre }}</span>
         </li>
         <li>
             <span class="field-name">Actors:</span>
-            <span class="field-value">
-                {% if movie.actor %}
-                {% set actors = movie.actor.split('/') %}
-                {% for actor in actors %}
-                    <a href="/list?actBy={{actor}}">{{actor}}</a> /
-                {% endfor %}
-                {% endif %}
-            </span>
+            <span class="field-value">{{ movie.actor }}</span>
         </li>
         <li>
             <span class="field-name">Rating:</span>
