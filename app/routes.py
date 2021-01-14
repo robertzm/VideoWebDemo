@@ -7,21 +7,14 @@ import uuid, shortuuid
 import sys, os.path
 from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import asc, desc
+import re
 
-from .models import db, MoviePath, MovieInfo, User, SubtitlePath, InvitationCode, MovieInfoV2
-from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm, SubtitlePathForm, SubtitleInfoForm
+from .models import db, MoviePath, User, SubtitlePath, InvitationCode, MovieInfoV2
+from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm, SubtitlePathForm, SubtitleInfoForm, \
+    SearchForm
 
 
 # I hate this total mess. Let's get most logic out of here !!!!
-
-@app.route("/migrate", methods=['GET'])
-def migrate():
-    allMovies = MovieInfo.query.all()
-    for movie in allMovies:
-        newInfo = MovieInfoV2(uuid=movie.uuid, nameen=movie.nameen, namecn=movie.namecn, year=movie.year, director=movie.director)
-        db.session.add(newInfo)
-        db.session.commit()
-    return make_response("done")
 
 @app.route("/", methods=["GET"])
 def home():
@@ -204,10 +197,21 @@ def register():
     return render_template('home/register.html', title='Register', form=form)
 
 
-@app.route('/list', methods=['GET'])
+@app.route('/list', methods=['GET', 'POST'])
 def list():
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
+    form = SearchForm()
+    if form.validate_on_submit():
+        return redirect(url_for('list', search=form.search.data))
+    searchBy = request.args.get('search')
+    if searchBy:
+        regexp = r'(.)*(' + re.sub('(,|\.| )+', ')(,|.| )(', searchBy) + ')(.)*'
+        allMovies = MovieInfoV2.query.filter(MovieInfoV2.nameen.op('regexp')(regexp) |
+                                             MovieInfoV2.namecn.op('regexp')(regexp) |
+                                             MovieInfoV2.director.op('regexp')(regexp) |
+                                             MovieInfoV2.actor.op('regexp')(regexp)).all()
+        return render_template('home/list.html', movies=allMovies, form=form)
     base = MovieInfoV2.query
     sortBy = request.args.get('sortBy')
     order = request.args.get('order')
@@ -226,7 +230,7 @@ def list():
     if genre:
         base = base.filter(MovieInfoV2.genre.contains(genre))
     allMovies = base.all()
-    return render_template("home/list.html", movies=allMovies)
+    return render_template("home/list.html", movies=allMovies, form=form)
 
 
 @app.route('/generateCode', methods=['GET'])

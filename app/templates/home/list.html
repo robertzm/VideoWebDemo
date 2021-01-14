@@ -12,8 +12,21 @@
     {% endif %}
     {% endwith %}
 
+    <div class="movie-register">
+
+        <form action="" method="post" novalidate id="movie-register-form">
+            {{ form.hidden_tag() }}
+            <p class="form-label">
+                {{ form.search.label }}<br>
+                {{ form.search(size=128) }}
+            </p>
+            <a>{{ form.submit() }}</a>
+        </form>
+    </div>
+
     <h1>All movies</h1>
-    <p style="color:red;">Sort by: <a href="/list?sortBy=year&order=desc">year/desc</a>  <a href="/list?sortBy=year&order=asc">year/asc</a></p>
+    <p style="color:red;">Sort by: <a href="/list?sortBy=year&order=desc">year/desc</a> <a
+            href="/list?sortBy=year&order=asc">year/asc</a></p>
     {% for movie in movies %}
     <ul id="movie.uid">
         <li>

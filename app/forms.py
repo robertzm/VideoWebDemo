@@ -66,3 +66,8 @@ class RegistrationForm(FlaskForm):
         record = InvitationCode.query.filter_by(uuid=invitationCode.data).first()
         if record is None or record.used == True:
             raise ValidationError('InvitationCode invalid, please use another one. ')
+
+
+class SearchForm(FlaskForm):
+    search = StringField('search', validators=[DataRequired()])
+    submit = SubmitField('Submit')
