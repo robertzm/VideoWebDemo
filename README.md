@@ -18,12 +18,15 @@ NOTE:
 
 ### TODO:
 1. Log System
-2. Subtitle:
+2. [DONE] Subtitle:
 3. Access IP block list;
-4. Invitation code for registration;
+4. [DONE] Invitation code for registration;
 5. Safety features??? 
 6. [DONE] Domain setup;
 7. Host setup;
 8. [DONE] Config system;
-9. Admin user pages???
+9. ~~Admin user pages???~~
 10. Rollback system?
+11. [DONE] Search bar
+12. [DONE] Sorting
+13. Rating
