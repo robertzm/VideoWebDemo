@@ -1,4 +1,6 @@
 # coding:utf8
+import logging
+
 from werkzeug.utils import secure_filename
 
 from flask import current_app as app
@@ -13,8 +15,9 @@ from .models import db, MoviePath, User, SubtitlePath, InvitationCode, MovieInfo
 from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm, SubtitlePathForm, SubtitleInfoForm, \
     SearchForm
 
-
 # I hate this total mess. Let's get most logic out of here !!!!
+logger = logging.getLogger('requests')
+
 
 @app.route("/", methods=["GET"])
 def home():
