@@ -17,7 +17,7 @@ NOTE:
 6. If you think any videos infringed your rights, please contact us for deleting: *kimimeng2013@gmail.com*
 
 ### TODO:
-1. Log System
+1. [DONE] Log System
 2. [DONE] Subtitle:
 3. Access IP block list;
 4. [DONE] Invitation code for registration;
@@ -30,3 +30,5 @@ NOTE:
 11. [DONE] Search bar
 12. [DONE] Sorting
 13. Rating
+14. series / TV shows
+15. auto-play next episode
