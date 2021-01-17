@@ -42,7 +42,7 @@ def index(short):
         return redirect(url_for('loginUser'))
 
     existing = MoviePath.query.filter(MoviePath.uuid == short).first()
-    info = MovieInfoV2.query.filter(MovieInfoV2.uuid == short).first()
+    info = MovieInfoV3.query.filter(MovieInfoV3.uuid == short).first()
     subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == short).first()
 
     if existing:
@@ -84,7 +84,7 @@ def editMoviveInfo(uuid):
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
     path = MoviePath.query.filter(MoviePath.uuid == uuid).first()
-    old = MovieInfoV2.query.filter(MovieInfoV2.uuid == uuid).first()
+    old = MovieInfoV3.query.filter(MovieInfoV3.uuid == uuid).first()
     infoForm = MovieInfoForm()
     if infoForm.validate_on_submit():
         old.nameen = infoForm.nameEN.data
@@ -130,7 +130,7 @@ def deleteMovie(uuid):
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
     MoviePath.query.filter(MoviePath.uuid == uuid).delete()
-    MovieInfoV2.query.filter(MovieInfoV2.uuid == uuid).delete()
+    MovieInfoV3.query.filter(MovieInfoV3.uuid == uuid).delete()
     db.session.commit()
     return list()
 
@@ -158,7 +158,7 @@ def addMovie(filepath: str) -> None:
     if not existing:
         uid = shortuuid.encode(uuid.uuid1())
         record = MoviePath(uuid=uid, filepath=absPath)
-        info = MovieInfoV2(uuid=uid)
+        info = MovieInfoV3(uuid=uid)
         db.session.add(record)
         db.session.add(info)
         db.session.commit()
@@ -222,28 +222,28 @@ def list():
     searchBy = request.args.get('search')
     if searchBy:
         regexp = r'(.)*(' + re.sub('(,|\.| )+', ')(,|.| )(', searchBy) + ')(.)*'
-        allMovies = MovieInfoV2.query.filter(MovieInfoV2.nameen.op('regexp')(regexp) |
-                                             MovieInfoV2.namecn.op('regexp')(regexp) |
-                                             MovieInfoV2.director.op('regexp')(regexp) |
-                                             MovieInfoV2.actor.op('regexp')(regexp)).all()
+        allMovies = MovieInfoV3.query.filter(MovieInfoV3.nameen.op('regexp')(regexp) |
+                                             MovieInfoV3.namecn.op('regexp')(regexp) |
+                                             MovieInfoV3.director.op('regexp')(regexp) |
+                                             MovieInfoV3.actor.op('regexp')(regexp)).all()
         return render_template('home/list.html', movies=allMovies, form=form)
-    base = MovieInfoV2.query
+    base = MovieInfoV3.query
     sortBy = request.args.get('sortBy')
     order = request.args.get('order')
-    if sortBy and sortBy in dir(MovieInfoV2):
+    if sortBy and sortBy in dir(MovieInfoV3):
         if order == 'asc':
             base = base.order_by(asc(sortBy))
         else:
             base = base.order_by(desc(sortBy))
     directBy = request.args.get('directBy')
     if directBy:
-        base = base.filter(MovieInfoV2.director.contains(directBy))
+        base = base.filter(MovieInfoV3.director.contains(directBy))
     actBy = request.args.get('actBy')
     if actBy:
-        base = base.filter(MovieInfoV2.actor.contains(actBy))
+        base = base.filter(MovieInfoV3.actor.contains(actBy))
     genre = request.args.get('genre')
     if genre:
-        base = base.filter(MovieInfoV2.genre.contains(genre))
+        base = base.filter(MovieInfoV3.genre.contains(genre))
     allMovies = base.all()
     return render_template("home/list.html", movies=allMovies, form=form)
 
