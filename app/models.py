@@ -66,7 +66,7 @@ class MovieInfoV2(db.Model):
 
 
 class MovieInfoV3(db.Model):
-    __tablename__ = "MovieInfoV2"
+    __tablename__ = "MovieInfoV3"
     uuid = db.Column(db.String(64), primary_key=True, nullable=False)
     nameen = db.Column(db.String(128), nullable=True)
     namecn = db.Column(db.String(128), nullable=True)
@@ -104,7 +104,3 @@ class InvitationCode(db.Model):
 
     def __repr__(self):
         return "<InvitationCode {}>".format(self.uuid)
-
-
-class SeriesInfo(db.Model):
-    __tablename__ = "Series"

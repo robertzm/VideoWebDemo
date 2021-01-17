@@ -22,7 +22,7 @@ logger = logging.getLogger('requests')
 def migrate():
     allMovies = MovieInfoV2.query.all()
     for movie in allMovies:
-        newInfo = MovieInfoV3(uuid=movie.uuid, nameen=movie.nameed,
+        newInfo = MovieInfoV3(uuid=movie.uuid, nameen=movie.nameen,
                               namecn=movie.namecn, year=movie.year,
                               director=movie.director, actor=movie.actor,
                               imdb=movie.imdb, douban=movie.douban,
