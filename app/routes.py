@@ -11,15 +11,27 @@ from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import asc, desc
 import re
 
-from .models import db, MoviePath, User, SubtitlePath, InvitationCode, MovieInfoV2
+from .models import db, MoviePath, User, SubtitlePath, InvitationCode, MovieInfoV2, MovieInfoV3
 from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm, SubtitlePathForm, SubtitleInfoForm, \
     SearchForm
 
 # I hate this total mess. Let's get most logic out of here !!!!
 logger = logging.getLogger('requests')
 
+@app.route("/migrate", methods=['GET', 'POST'])
+def migrate():
+    allMovies = MovieInfoV2.query.all()
+    for movie in allMovies:
+        newInfo = MovieInfoV3(uuid=movie.uuid, nameen=movie.nameed,
+                              namecn=movie.namecn, year=movie.year,
+                              director=movie.director, actor=movie.actor,
+                              imdb=movie.imdb, douban=movie.douban,
+                              genre=movie.genre, comment=movie.comment)
+        db.session.add(newInfo)
+        db.session.commit()
+    return make_response("migrate done")
 
-@app.route("/", methods=["GET"])
+@app.route("/", methods=["GET", "POST"])
 def home():
     return list()
 
