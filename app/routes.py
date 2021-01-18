@@ -73,9 +73,11 @@ def allSeries():
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
     form = SeriesPathForm()
-    uid = shortuuid.encode(uuid.uuid1())
     if form.validate_on_submit():
         if os.path.isdir(os.path.join(sys.path[0], "app", "static", form.path.data)):
+            uid = shortuuid.encode(uuid.uuid1())
+            info = MovieInfoV3(uuid=uid, isSeries=True)
+            db.session.add(info)
             secureAndAddFile(os.path.join(sys.path[0], "app", "static", form.path.data), uid, addSeries)
         else:
             return make_response("Input is not a directory. ")
@@ -184,11 +186,7 @@ def addSeries(filepath: str, uid: str) -> None:
     absPath = filepath.split('static')[1].replace('\\', '/')[1:]
     existing = MoviePath.query.filter(MoviePath.filepath == absPath).first()
     if not existing:
-        info = MovieInfoV3(uuid=uid, isSeries=True)
-        record = MoviePath(uuid=uid, filepath=absPath)
-        episode = Series(uuid=uid)
-        db.session.add(record)
-        db.session.add(info)
+        episode = Series(uuid=uid, filepath=absPath)
         db.session.add(episode)
         db.session.commit()
 
