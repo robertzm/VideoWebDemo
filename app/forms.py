@@ -10,6 +10,11 @@ class MoviePathForm(Form):
     submit = SubmitField('submit')
 
 
+class SeriesPathForm(Form):
+    path = StringField('path', default='series', validators=[InputRequired(), Length(max=100)])
+    submit = SubmitField('submit')
+
+
 class SubtitlePathForm(Form):
     path = StringField('path', default='subtitle', validators=[InputRequired(), Length(max=100)])
     submit = SubmitField('submit')

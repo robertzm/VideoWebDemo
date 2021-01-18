@@ -11,12 +11,13 @@ from flask_login import current_user, login_required, login_user, logout_user
 from sqlalchemy import asc, desc
 import re
 
-from .models import db, MoviePath, User, SubtitlePath, InvitationCode, MovieInfoV2, MovieInfoV3
+from .models import db, MoviePath, User, SubtitlePath, InvitationCode, MovieInfoV2, MovieInfoV3, Series
 from .forms import MoviePathForm, MovieInfoForm, LoginForm, RegistrationForm, SubtitlePathForm, SubtitleInfoForm, \
-    SearchForm
+    SearchForm, SeriesPathForm
 
 # I hate this total mess. Let's get most logic out of here !!!!
 logger = logging.getLogger('requests')
+
 
 @app.route("/migrate", methods=['GET', 'POST'])
 def migrate():
@@ -30,6 +31,7 @@ def migrate():
         db.session.add(newInfo)
         db.session.commit()
     return make_response("migrate done")
+
 
 @app.route("/", methods=["GET", "POST"])
 def home():
@@ -60,10 +62,24 @@ def addAllMovive():
     form = MoviePathForm()
     if form.validate_on_submit():
         if os.path.isdir(os.path.join(sys.path[0], "app", "static", form.path.data)):
-            secureAndAddFile(os.path.join(sys.path[0], "app", "static", form.path.data), addMovie)
+            secureAndAddFile(os.path.join(sys.path[0], "app", "static", form.path.data), None, addMovie)
         else:
             return make_response("Input is not a directory.")
     return render_template("home/addAll.html", form=form)
+
+
+@app.route("/addSeries", methods=['GET', 'POST'])
+def allSeries():
+    if not current_user.is_authenticated:
+        return redirect(url_for('loginUser'))
+    form = SeriesPathForm()
+    uid = shortuuid.encode(uuid.uuid1())
+    if form.validate_on_submit():
+        if os.path.isdir(os.path.join(sys.path[0], "app", "static", form.path.data)):
+            secureAndAddFile(os.path.join(sys.path[0], "app", "static", form.path.data), uid, addSeries)
+        else:
+            return make_response("Input is not a directory. ")
+        return render_template("home/addSeries.html", form=form)
 
 
 @app.route("/addSubtitle", methods=['GET', 'POST'])
@@ -73,7 +89,7 @@ def addAllSubtitle():
     form = SubtitlePathForm()
     if form.validate_on_submit():
         if os.path.isdir(os.path.join(sys.path[0], "app", "static", form.path.data)):
-            secureAndAddFile(os.path.join(sys.path[0], "app", "static", form.path.data), addSubtitle)
+            secureAndAddFile(os.path.join(sys.path[0], "app", "static", form.path.data), None, addSubtitle)
         else:
             return make_response("Input is not a directory. ")
     return render_template("home/addAllSubtitle.html", form=form)
@@ -135,12 +151,12 @@ def deleteMovie(uuid):
     return list()
 
 
-def secureAndAddFile(dir: str, addMethod):
+def secureAndAddFile(dir: str, uid: str, addMethod):
     files = os.listdir(dir)
     for file in files:
         filepath = os.path.join(dir, file)
         if os.path.isdir(filepath):
-            secureAndAddFile(filepath, addMethod)
+            secureAndAddFile(filepath, uid, addMethod)
         elif file.startswith('.'):
             pass
         else:
@@ -149,10 +165,10 @@ def secureAndAddFile(dir: str, addMethod):
             if not newFile.__eq__(filepath):
                 print("renamed")
                 os.rename(filepath, newFile)
-            addMethod(newFile)
+            addMethod(newFile, uid)
 
 
-def addMovie(filepath: str) -> None:
+def addMovie(filepath: str, uid: str) -> None:
     absPath = filepath.split('static')[1].replace('\\', '/')[1:]
     existing = MoviePath.query.filter(MoviePath.filepath == absPath).first()
     if not existing:
@@ -164,7 +180,20 @@ def addMovie(filepath: str) -> None:
         db.session.commit()
 
 
-def addSubtitle(filepath: str) -> None:
+def addSeries(filepath: str, uid: str) -> None:
+    absPath = filepath.split('static')[1].replace('\\', '/')[1:]
+    existing = MoviePath.query.filter(MoviePath.filepath == absPath).first()
+    if not existing:
+        info = MovieInfoV3(uuid=uid, isSeries=True)
+        record = MoviePath(uuid=uid, filepath=absPath)
+        episode = Series(uuid=uid)
+        db.session.add(record)
+        db.session.add(info)
+        db.session.add(episode)
+        db.session.commit()
+
+
+def addSubtitle(filepath: str, uid: str) -> None:
     absPath = filepath.split('static')[1].replace('\\', '/')[1:]
     existing = SubtitlePath.query.filter(SubtitlePath.filepath == absPath).first()
     if not existing:

@@ -104,3 +104,13 @@ class InvitationCode(db.Model):
 
     def __repr__(self):
         return "<InvitationCode {}>".format(self.uuid)
+
+class Series(db.Model):
+    __tablename__ = "Series"
+    id = db.Column(db.Integer, primary_key=True)
+    uuid = db.Column(db.String(64), nullable=False)
+    name = db.Column(db.String(128), nullable=True)
+    episode = db.Column(db.String(32), nullable=True)
+
+    def __repr__(self):
+        return "<Series {}>".format(self.name)
