@@ -54,6 +54,25 @@ def index(short):
     else:
         return make_response("There's no movie for '{}' existing. ".format(short))
 
+@app.route("/series/<short>", methods=["GET"])
+def watchSeries(short):
+    if not current_user.is_authenticated:
+        return redirect(url_for('loginUser'))
+
+    index = request.args.get('index')
+    if not index:
+        episode = Series.query.filter(Series.uuid == short).first()
+    else:
+        episode = Series.query.filter(Series.uuid == short, Series.episode == index).first()
+    info = MovieInfoV3.query.filter(MovieInfoV3.uuid == short).first()
+
+    if episode:
+        return render_template("home/index.html", file=episode.filepath,
+                               movie=info,
+                               subtitle=episode.subtitle)
+    else:
+        return make_response("There's no movie for '{}' existing. ".format(short))
+
 
 @app.route("/addAll", methods=['GET', 'POST'])
 def addAllMovive():
