@@ -111,6 +111,7 @@ class Series(db.Model):
     uuid = db.Column(db.String(64), nullable=False)
     episode = db.Column(db.String(32), nullable=True)
     filepath = db.Column(db.String(256), nullable=False)
+    subtitle = db.Column(db.String(256), nullable=True)
 
     def __repr__(self):
         return "<Series {}>".format(self.name)

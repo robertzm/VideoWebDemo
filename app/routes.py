@@ -81,7 +81,7 @@ def allSeries():
             secureAndAddFile(os.path.join(sys.path[0], "app", "static", form.path.data), uid, addSeries)
         else:
             return make_response("Input is not a directory. ")
-        return render_template("home/addSeries.html", form=form)
+    return render_template("home/addSeries.html", form=form)
 
 
 @app.route("/addSubtitle", methods=['GET', 'POST'])
