@@ -10,7 +10,7 @@ config = configparser.ConfigParser()
 config.read("app/VideoWebConfig.ini")
 
 if len(sys.argv) > 1 and sys.argv[1] == "PROD":
-    app_url = config['PROD'].get('url', "192.168.0.14")
+    app_url = config['PROD'].get('url', "192.168.0.30")
     app_port = config['PROD'].get('port', '5000')
 else:
     app_url = config['LOCAL'].get('url', "127.0.0.1")
@@ -18,10 +18,15 @@ else:
 
 db_config = config['MYSQL_DB']
 db_user = db_config.get('user', 'root')
-db_pwd = db_config.get('pwd', 'root')
+
+if len(sys.argv) > 1 and sys.argv[1] == "PROD":
+    db_pwd = db_config.get('pwd', 'root')
+else:
+    db_pwd = 'root'
+
 db_url = db_config.get('url', '127.0.0.1')
-db_port = db_config.get('port', '8889')
-db_database = db_config.get('database', 'videoDevo')
+db_port = db_config.get('port', '3306')
+db_database = db_config.get('database', 'MovieDevo')
 
 db = SQLAlchemy()
 patch_all()

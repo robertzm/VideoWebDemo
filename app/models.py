@@ -5,7 +5,7 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 
 class User(UserMixin, db.Model):
-    __tablename__ = "User"
+    __tablename__ = "user"
     id = db.Column(db.Integer, primary_key=True)
     username = db.Column(db.String(64), index=True, unique=True)
     email = db.Column(db.String(128), index=True, unique=True)
@@ -27,7 +27,7 @@ def load_user(id):
 
 
 class MoviePath(db.Model):
-    __tablename__ = "MoviePath"
+    __tablename__ = "moviepath"
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(64), unique=True, nullable=False)
     filepath = db.Column(db.String(256), nullable=False)
@@ -37,7 +37,7 @@ class MoviePath(db.Model):
 
 
 class MovieInfo(db.Model):
-    __tablename__ = "MovieInfo"
+    __tablename__ = "movieinfo"
     uuid = db.Column(db.String(64), primary_key=True, nullable=False)
     nameen = db.Column(db.String(128), nullable=True)
     namecn = db.Column(db.String(128), nullable=True)
@@ -49,7 +49,7 @@ class MovieInfo(db.Model):
 
 
 class MovieInfoV2(db.Model):
-    __tablename__ = "MovieInfoV2"
+    __tablename__ = "movieinfov2"
     uuid = db.Column(db.String(64), primary_key=True, nullable=False)
     nameen = db.Column(db.String(128), nullable=True)
     namecn = db.Column(db.String(128), nullable=True)
@@ -66,7 +66,7 @@ class MovieInfoV2(db.Model):
 
 
 class MovieInfoV3(db.Model):
-    __tablename__ = "MovieInfoV3"
+    __tablename__ = "movieinfov3"
     uuid = db.Column(db.String(64), primary_key=True, nullable=False)
     nameen = db.Column(db.String(128), nullable=True)
     namecn = db.Column(db.String(128), nullable=True)
@@ -85,7 +85,7 @@ class MovieInfoV3(db.Model):
 
 
 class SubtitlePath(db.Model):
-    __tablename__ = "Subtitle"
+    __tablename__ = "subtitle"
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(64), unique=True, nullable=True)
     lang = db.Column(db.String(32))
@@ -96,7 +96,7 @@ class SubtitlePath(db.Model):
 
 
 class InvitationCode(db.Model):
-    __tablename__ = "Invitation"
+    __tablename__ = "invitation"
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(64), unique=True, nullable=False)
     parent = db.Column(db.String(64))
@@ -106,7 +106,7 @@ class InvitationCode(db.Model):
         return "<InvitationCode {}>".format(self.uuid)
 
 class Series(db.Model):
-    __tablename__ = "Series"
+    __tablename__ = "series"
     id = db.Column(db.Integer, primary_key=True)
     uuid = db.Column(db.String(64), nullable=False)
     episode = db.Column(db.String(32), nullable=True)
