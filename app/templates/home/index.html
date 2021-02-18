@@ -145,6 +145,16 @@
             <span class="field-name">Film Name(CN):</span>
             <span class="field-value">{{ movie.namecn }}</span>
         </li>
+        {% if allSeries %}
+        <li>
+            <span class="field-name">Episodes:</span>
+            <span class="field-value">
+                {% for episode in allSeries %}
+                <a href="/series/{{ movie.uuid }}?index={{ episode.episode }}">{{ episode.episode }}</a>
+                {% endfor %}
+            </span>
+        </li>
+        {% endif %}
         <li>
             <span class="field-name">Year:</span>
             <span class="field-value">{{ movie.year }}</span>

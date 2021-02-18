@@ -54,20 +54,25 @@ def index(short):
     else:
         return make_response("There's no movie for '{}' existing. ".format(short))
 
+
 @app.route("/series/<short>", methods=["GET"])
 def watchSeries(short):
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
 
     index = request.args.get('index')
-    if not index:
-        episode = Series.query.filter(Series.uuid == short).first()
-    else:
+    episode = None
+    if index:
         episode = Series.query.filter(Series.uuid == short, Series.episode == index).first()
+    if not episode:
+        episode = Series.query.filter(Series.uuid == short).first()
+
     info = MovieInfoV3.query.filter(MovieInfoV3.uuid == short).first()
+    allSeries = Series.query.filter(Series.uuid == short).order_by(asc('episode')).all()
 
     if episode:
         return render_template("home/index.html", file=episode.filepath,
+                               allSeries=allSeries,
                                movie=info,
                                subtitle=episode.subtitle)
     else:
@@ -92,15 +97,26 @@ def allSeries():
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
     form = SeriesPathForm()
+    dir = os.path.join(sys.path[0], "app", "static", form.path.data)
     if form.validate_on_submit():
-        if os.path.isdir(os.path.join(sys.path[0], "app", "static", form.path.data)):
-            uid = shortuuid.encode(uuid.uuid1())
+        if os.path.isdir(dir):
+            uid = getOrCreateUUID(dir)
             info = MovieInfoV3(uuid=uid, isSeries=True)
             db.session.add(info)
-            secureAndAddFile(os.path.join(sys.path[0], "app", "static", form.path.data), uid, addSeries)
+            secureAndAddFile(dir, uid, addSeries)
         else:
             return make_response("Input is not a directory. ")
     return render_template("home/addSeries.html", form=form)
+
+
+def getOrCreateUUID(dir: str) -> str:
+    files = os.listdir(dir)
+    files = [os.path.join(dir, f).split('static')[1].replace('\\', '/')[1:] for f in files]
+    allSeries = Series.query.all()
+    for episode in allSeries:
+        if episode.filepath in files:
+            return episode.uuid
+    return shortuuid.encode(uuid.uuid1())
 
 
 @app.route("/addSubtitle", methods=['GET', 'POST'])
@@ -202,11 +218,16 @@ def addMovie(filepath: str, uid: str) -> None:
 
 
 def addSeries(filepath: str, uid: str) -> None:
-    absPath = filepath.split('static')[1].replace('\\', '/')[1:]
-    existing = MoviePath.query.filter(MoviePath.filepath == absPath).first()
+    relativePath = filepath.split('static')[1].replace('\\', '/')[1:]
+    existing = Series.query.filter(Series.filepath == relativePath).first()
+    tmp = re.search('\.E[0-9]*\.', relativePath)
+    if tmp:
+        episode = tmp[0][1:-1]
+    else:
+        episode = 'NONE'
     if not existing:
-        episode = Series(uuid=uid, filepath=absPath)
-        db.session.add(episode)
+        e = Series(uuid=uid, episode=episode, filepath=relativePath)
+        db.session.add(e)
         db.session.commit()
 
 
