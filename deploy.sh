@@ -7,7 +7,7 @@ then
     pip install -r requirements.txt
     mysql.server restart
     mysql -uroot -proot &
-    python3 manage.py
+    python3 manage.py PROD
 else
     virtualenv venv
     source venv/bin/activate
@@ -15,5 +15,5 @@ else
     pip install -r requirements.txt
     mysql.server restart
     mysql -uroot -proot &
-    python3 manage.py
+    python3 manage.py PROD
 fi
