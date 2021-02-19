@@ -13,7 +13,9 @@
         </p>
         <p>
             FilePath: <br>
-            {{ filepath }}
+            {% for p in filepath %}
+            {{ p.filepath }} <br>
+            {% endfor %}
         </p>
         {{ form.hidden_tag() }}
         <p class ="form-label">

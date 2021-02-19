@@ -137,8 +137,13 @@ def addAllSubtitle():
 def editMoviveInfo(uuid):
     if not current_user.is_authenticated:
         return redirect(url_for('loginUser'))
-    path = MoviePath.query.filter(MoviePath.uuid == uuid).first()
     old = MovieInfoV3.query.filter(MovieInfoV3.uuid == uuid).first()
+    if not old:
+        return make_response("{} doesn't have any old Movie Info".format(uuid))
+    if old.isSeries:
+        path = Series.query.filter(Series.uuid == uuid).order_by(asc('filepath')).all()
+    else:
+        path = MoviePath.query.filter(MoviePath.uuid == uuid).all()
     infoForm = MovieInfoForm()
     if infoForm.validate_on_submit():
         old.nameen = infoForm.nameEN.data
@@ -150,8 +155,11 @@ def editMoviveInfo(uuid):
         old.imdb = infoForm.imdb.data
         old.douban = infoForm.douban.data
         db.session.commit()
-        return index(uuid)
-    return render_template("home/editInfo.html", form=infoForm, uuid=path.uuid, filepath=path.filepath, old=old)
+        if old.isSeries:
+            return watchSeries(uuid)
+        else:
+            return index(uuid)
+    return render_template("home/editInfo.html", form=infoForm, uuid=uuid, filepath=path, old=old)
 
 
 @app.route("/link/subtitle/<uuid>", methods=['GET', 'POST'])
@@ -221,7 +229,7 @@ def addMovie(filepath: str, uid: str) -> None:
 def addSeries(filepath: str, uid: str) -> None:
     relativePath = filepath.split('static')[1].replace('\\', '/')[1:]
     existing = Series.query.filter(Series.filepath == relativePath).first()
-    tmp = re.search('\.(S[0-9]*)?E[0-9]*\.', relativePath)
+    tmp = re.search('\.(S[0-9]*)?E[0-9]*\.', relativePath.upper())
     if tmp:
         episode = tmp[0][1:-1]
     else:
