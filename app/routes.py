@@ -193,6 +193,7 @@ def deleteMovie(uuid):
         return redirect(url_for('loginUser'))
     MoviePath.query.filter(MoviePath.uuid == uuid).delete()
     MovieInfoV3.query.filter(MovieInfoV3.uuid == uuid).delete()
+    Series.query.filter(Series.uuid == uuid).delete()
     db.session.commit()
     return list()
 
