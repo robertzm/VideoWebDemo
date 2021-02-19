@@ -221,7 +221,7 @@ def addMovie(filepath: str, uid: str) -> None:
 def addSeries(filepath: str, uid: str) -> None:
     relativePath = filepath.split('static')[1].replace('\\', '/')[1:]
     existing = Series.query.filter(Series.filepath == relativePath).first()
-    tmp = re.search('\.E[0-9]*\.', relativePath)
+    tmp = re.search('\.(S[0-9]*)?E[0-9]*\.', relativePath)
     if tmp:
         episode = tmp[0][1:-1]
     else:
