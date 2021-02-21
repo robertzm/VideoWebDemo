@@ -5,5 +5,5 @@ from app import app_url
 app = create_app()
 
 if __name__ == "__main__":
-    app.run(host=app_url, threaded=True, processes=3)
+    app.run(host=app_url, threaded=True)
 
