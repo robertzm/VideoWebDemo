@@ -50,7 +50,9 @@ def create_app():
         from . import routes  # Import routes
 
         from app.src.user.user import user_bp
+        from app.src.movie.movie import movie_bp
         app.register_blueprint(user_bp)
+        app.register_blueprint(movie_bp, url_prefix='/movie')
         db.create_all()  # Create database tables for our data models
 
         return app

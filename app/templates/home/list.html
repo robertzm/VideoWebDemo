@@ -34,7 +34,7 @@
             {% if movie.isSeries == True %}
             <span class="field-value"><a href="/series/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
             {% else %}
-            <span class="field-value"><a href="/movie/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
+            <span class="field-value"><a href="/movie/watch/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
             {% endif %}
 
         </li>

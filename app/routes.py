@@ -2,57 +2,27 @@
 import logging
 
 from flask import current_app as app
-from flask import make_response, render_template, request, redirect, url_for, flash
-import uuid, shortuuid
-import sys, os.path
+from flask import make_response, render_template, request, redirect, url_for
 from flask_login import current_user
 from sqlalchemy import asc, desc
+import sys, os.path
 import re
 
-from .models import db, MoviePath, SubtitlePath, InvitationCode, MovieInfoV2, MovieInfoV3, Series
-from .forms import MoviePathForm, MovieInfoForm, SubtitlePathForm, SubtitleInfoForm, SearchForm, SeriesPathForm
+from .models import db, SubtitlePath, Series
+from .forms import SubtitlePathForm, SubtitleInfoForm, SearchForm, SeriesPathForm
 
 # I hate this total mess. Let's get most logic out of here !!!!
-from app.src.util.files import secureAndAddFile, addMovie, addSeries, addSubtitle
+from app.src.util.files import secureAndAddFile, addSeries, addSubtitle
 from app.src.util.uid import getOrCreateUUID
+from .src.movie.models import MovieInfoV3
+from .src.movie.movie import watchMovie
 
 logger = logging.getLogger('requests')
-
-
-@app.route("/migrate", methods=['GET', 'POST'])
-def migrate():
-    allMovies = MovieInfoV2.query.all()
-    for movie in allMovies:
-        newInfo = MovieInfoV3(uuid=movie.uuid, nameen=movie.nameen,
-                              namecn=movie.namecn, year=movie.year,
-                              director=movie.director, actor=movie.actor,
-                              imdb=movie.imdb, douban=movie.douban,
-                              genre=movie.genre, comment=movie.comment)
-        db.session.add(newInfo)
-        db.session.commit()
-    return make_response("migrate done")
 
 
 @app.route("/", methods=["GET", "POST"])
 def home():
     return list()
-
-
-@app.route("/movie/<short>", methods=["GET"])
-def index(short):
-    if not current_user.is_authenticated:
-        return redirect(url_for('user_bp.loginUser'))
-
-    existing = MoviePath.query.filter(MoviePath.uuid == short).first()
-    info = MovieInfoV3.query.filter(MovieInfoV3.uuid == short).first()
-    subtitle = SubtitlePath.query.filter(SubtitlePath.uuid == short).first()
-
-    if existing:
-        return render_template("home/index.html", file=existing.filepath,
-                               movie=info,
-                               subtitle=subtitle)
-    else:
-        return make_response("There's no movie for '{}' existing. ".format(short))
 
 
 @app.route("/series/<short>", methods=["GET"])
@@ -77,19 +47,6 @@ def watchSeries(short):
                                subtitle=episode.subtitle)
     else:
         return make_response("There's no movie for '{}' existing. ".format(short))
-
-
-@app.route("/addAll", methods=['GET', 'POST'])
-def addAllMovive():
-    if not current_user.is_authenticated:
-        return redirect(url_for('user_bp.loginUser'))
-    form = MoviePathForm()
-    if form.validate_on_submit():
-        if os.path.isdir(os.path.join(sys.path[0], "app", "static", form.path.data)):
-            secureAndAddFile(os.path.join(sys.path[0], "app", "static", form.path.data), None, addMovie)
-        else:
-            return make_response("Input is not a directory.")
-    return render_template("home/addAll.html", form=form)
 
 
 @app.route("/addSeries", methods=['GET', 'POST'])
@@ -123,35 +80,6 @@ def addAllSubtitle():
     return render_template("home/addAllSubtitle.html", form=form)
 
 
-@app.route("/movie/edit/<uuid>", methods=['GET', 'POST'])
-def editMoviveInfo(uuid):
-    if not current_user.is_authenticated:
-        return redirect(url_for('user_bp.loginUser'))
-    old = MovieInfoV3.query.filter(MovieInfoV3.uuid == uuid).first()
-    if not old:
-        return make_response("{} doesn't have any old Movie Info".format(uuid))
-    if old.isSeries:
-        path = Series.query.filter(Series.uuid == uuid).order_by(asc('filepath')).all()
-    else:
-        path = MoviePath.query.filter(MoviePath.uuid == uuid).all()
-    infoForm = MovieInfoForm()
-    if infoForm.validate_on_submit():
-        old.nameen = infoForm.nameEN.data
-        old.namecn = infoForm.nameCN.data
-        old.year = infoForm.year.data
-        old.director = infoForm.director.data
-        old.actor = infoForm.actor.data
-        old.genre = infoForm.genre.data
-        old.imdb = infoForm.imdb.data
-        old.douban = infoForm.douban.data
-        db.session.commit()
-        if old.isSeries:
-            return watchSeries(uuid)
-        else:
-            return index(uuid)
-    return render_template("home/editInfo.html", form=infoForm, uuid=uuid, filepath=path, old=old)
-
-
 @app.route("/link/subtitle/<uuid>", methods=['GET', 'POST'])
 def editMoviveSubtitle(uuid):
     if not current_user.is_authenticated:
@@ -164,7 +92,7 @@ def editMoviveSubtitle(uuid):
         old.uuid = uuid
         old.lang = form.lang.data
         db.session.commit()
-        return index(uuid)
+        return watchMovie(uuid)
     return render_template("home/editSubtitle.html", uuid=uuid, form=form)
 
 
@@ -174,18 +102,7 @@ def deleteSubtitle(uuid):
         return redirect(url_for('user_bp.loginUser'))
     SubtitlePath.query.filter(SubtitlePath.uuid == uuid).delete()
     db.session.commit()
-    return index(uuid)
-
-
-@app.route("/movie/delete/<uuid>", methods=['GET', 'POST'])
-def deleteMovie(uuid):
-    if not current_user.is_authenticated:
-        return redirect(url_for('user_bp.loginUser'))
-    MoviePath.query.filter(MoviePath.uuid == uuid).delete()
-    MovieInfoV3.query.filter(MovieInfoV3.uuid == uuid).delete()
-    Series.query.filter(Series.uuid == uuid).delete()
-    db.session.commit()
-    return list()
+    return watchMovie(uuid)
 
 
 @app.route('/list', methods=['GET', 'POST'])
@@ -222,16 +139,3 @@ def list():
         base = base.filter(MovieInfoV3.genre.contains(genre))
     allMovies = base.all()
     return render_template("home/list.html", movies=allMovies, form=form)
-
-
-@app.route('/generateCode', methods=['GET'])
-def generate():
-    if not current_user.is_authenticated:
-        return redirect(url_for('user_bp.loginUser'))
-    uid = shortuuid.encode(uuid.uuid1())
-    parent = current_user.username
-    invitationCode = InvitationCode(uuid=uid, parent=parent)
-    db.session.add(invitationCode)
-    db.session.commit()
-    flash('Congratulations, you can invite your friend with code: {}'.format(uid))
-    return list()

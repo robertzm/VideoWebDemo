@@ -2,10 +2,11 @@
 from flask import Blueprint, flash, url_for, render_template
 from flask_login import current_user, login_user, logout_user
 from werkzeug.utils import redirect
+import shortuuid, uuid
 
 from app import db
-from app.forms import LoginForm, RegistrationForm
-from app.models import User, InvitationCode
+from app.src.user.forms import LoginForm, RegistrationForm
+from app.src.user.models import User, InvitationCode
 
 user_bp = Blueprint(
     "user_bp", __name__, template_folder="templates", static_folder="static"
@@ -50,3 +51,15 @@ def register():
         return redirect(url_for('user_bp.loginUser'))
     return render_template('home/register.html', title='Register', form=form)
 
+
+@user_bp.route('/generateCode', methods=['GET'])
+def generate():
+    if not current_user.is_authenticated:
+        return redirect(url_for('user_bp.loginUser'))
+    uid = shortuuid.encode(uuid.uuid1())
+    parent = current_user.username
+    invitationCode = InvitationCode(uuid=uid, parent=parent)
+    db.session.add(invitationCode)
+    db.session.commit()
+    flash('Congratulations, you can invite your friend with code: {}'.format(uid))
+    return list()
