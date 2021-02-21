@@ -14,7 +14,7 @@ from .forms import MoviePathForm, MovieInfoForm, SubtitlePathForm, SubtitleInfoF
 
 # I hate this total mess. Let's get most logic out of here !!!!
 from app.src.util.files import secureAndAddFile, addMovie, addSeries, addSubtitle
-from app.src.util.uuid import getOrCreateUUID
+from app.src.util.uid import getOrCreateUUID
 
 logger = logging.getLogger('requests')
 

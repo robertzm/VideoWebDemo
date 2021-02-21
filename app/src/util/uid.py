@@ -1,4 +1,4 @@
-import os, shortuuid
+import os, shortuuid, uuid
 
 from app.models import Series
 

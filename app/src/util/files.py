@@ -1,5 +1,4 @@
-import os, shortuuid
-from app.src.util import uuid
+import os, shortuuid, uuid
 import re
 
 from werkzeug.utils import secure_filename
