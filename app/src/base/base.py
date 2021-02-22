@@ -1,26 +1,24 @@
-# coding:utf8
-import logging
-
-from flask import current_app as app
-from flask import render_template, request, redirect, url_for
-from flask_login import current_user
-from sqlalchemy import asc, desc
+# Blueprint Configuration
 import re
 
-from .forms import SearchForm
+from flask import Blueprint, url_for, render_template, request
+from flask_login import current_user
+from sqlalchemy import asc, desc
+from werkzeug.utils import redirect
 
-# I hate this total mess. Let's get most logic out of here !!!!
-from .src.movie.models import MovieInfoV3
+from app.src.base.forms import SearchForm
+from app.src.movie.models import MovieInfoV3
 
-logger = logging.getLogger('requests')
+base_bp = Blueprint(
+    "base_bp", __name__, template_folder="templates", static_folder="static"
+)
 
-
-@app.route("/", methods=["GET", "POST"])
+@base_bp.route("/", methods=["GET", "POST"])
 def home():
     return list()
 
 
-@app.route('/list', methods=['GET', 'POST'])
+@base_bp.route('/list', methods=['GET', 'POST'])
 def list():
     if not current_user.is_authenticated:
         return redirect(url_for('user_bp.loginUser'))
