@@ -52,9 +52,11 @@ def create_app():
         from app.src.user.user import user_bp
         from app.src.movie.movie import movie_bp
         from app.src.series.series import series_bp
+        from app.src.subtitle.subtitle import subtitle_bp
         app.register_blueprint(user_bp)
         app.register_blueprint(movie_bp, url_prefix='/movie')
         app.register_blueprint(series_bp, url_prefix='/series')
+        app.register_blueprint(subtitle_bp, url_prefix='/subtitle')
         db.create_all()  # Create database tables for our data models
 
         return app
