@@ -1,6 +1,6 @@
 import os, shortuuid, uuid
 
-from app.models import Series
+from app.src.series.models import Series
 
 
 def getOrCreateUUID(dir: str) -> (bool, str):

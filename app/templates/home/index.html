@@ -132,7 +132,7 @@
         <li>
             <span class="field-name">ID:</span>
             {% if movie.isSeries == True %}
-            <span class="field-value"><a href="/series/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
+            <span class="field-value"><a href="/series/watch/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
             {% else %}
             <span class="field-value"><a href="/movie/watch/{{ movie.uuid }}">{{ movie.uuid }}</a></span>
             {% endif %}
@@ -150,7 +150,7 @@
             <span class="field-name">Episodes:</span>
             <span class="field-value">
                 {% for episode in allSeries %}
-                <a href="/series/{{ movie.uuid }}?index={{ episode.episode }}">{{ episode.episode }}</a>
+                <a href="/series/watch/{{ movie.uuid }}?index={{ episode.episode }}">{{ episode.episode }}</a>
                 {% endfor %}
             </span>
         </li>

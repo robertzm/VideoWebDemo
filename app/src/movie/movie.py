@@ -7,9 +7,10 @@ from sqlalchemy import asc
 from werkzeug.utils import redirect
 
 from app import db
-from app.models import SubtitlePath, Series
+from app.models import SubtitlePath
 from app.src.movie.forms import MoviePathForm, MovieInfoForm
 from app.src.movie.models import MoviePath, MovieInfoV3
+from app.src.series.models import Series
 from app.src.util.files import secureAndAddFile, addMovie
 
 movie_bp = Blueprint(

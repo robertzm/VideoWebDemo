@@ -4,8 +4,9 @@ import re
 from werkzeug.utils import secure_filename
 
 from app import db
-from app.models import Series, SubtitlePath
+from app.models import SubtitlePath
 from app.src.movie.models import MoviePath, MovieInfoV3
+from app.src.series.models import Series
 
 
 def secureAndAddFile(dir: str, uid: str, addMethod):
